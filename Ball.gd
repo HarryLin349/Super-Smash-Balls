@@ -1,8 +1,7 @@
 extends RigidBody2D
 class_name Ball
 
-signal damage_taken_changed(ball_id: int, damage_taken: int)
-signal damage_changed(ball_id: int, damage: int)
+signal damage_taken_changed(ball_id: int, damage_taken: float)
 
 @export var ball_id := 1
 @export var ball_color := Color(0.9, 0.2, 0.2)
@@ -26,10 +25,12 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hitstun_tint_strength := 0.35
 @export var hitstun_trail_interval := 0.08
 @export var hitstun_trail_lifetime := 0.4
-@export var attraction_speed_cap := 260.0
+@export var attraction_speed_cap := 300.0
 @export var hitstun_drag_window := 0.2
 @export var hitstun_drag_strength := 900.0
 @export var double_jump_ring_duration := 0.5
+@export var max_double_jumps := 1
+@export var weight := 1.0
 
 static var _hit_stop_active := false
 var _flash_timer := 0.0
@@ -39,9 +40,10 @@ var _jump_cooldown := 0.0
 var _hitstun_time_left := 0.0
 var _in_hitstun := false
 var _trail_timer := 0.0
+var _double_jumps_used := 0
+var _suppress_knockback_until := 0
 
-var damage_taken := 0
-var damage := 1
+var damage_taken := 0.0
 
 @onready var hp_label: Label = $HpLabel
 @onready var hitstun_trail_layer: Node2D = $HitstunTrailLayer
@@ -64,7 +66,6 @@ func _ready() -> void:
 	queue_redraw()
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
-	emit_signal("damage_changed", ball_id, damage)
 
 func _physics_process(delta: float) -> void:
 	_apex_cooldown = max(_apex_cooldown - delta, 0.0)
@@ -73,6 +74,8 @@ func _physics_process(delta: float) -> void:
 		_hitstun_time_left = max(_hitstun_time_left - delta, 0.0)
 	if _in_hitstun and _hitstun_time_left <= 0.0:
 		_set_hitstun(false)
+	if _is_on_floor() and _double_jumps_used > 0:
+		_double_jumps_used = 0
 	if _in_hitstun and _hitstun_time_left <= hitstun_drag_window:
 		_apply_hitstun_drag()
 	if _in_hitstun:
@@ -96,19 +99,25 @@ func _draw() -> void:
 		draw_color = ball_color.lerp(Color(1, 1, 1), hitstun_tint_strength)
 	draw_circle(Vector2.ZERO, radius, draw_color)
 
-func take_damage(amount: int, source: Ball = null) -> void:
-	damage_taken = max(damage_taken + amount, 0)
+func take_damage(amount: float, source: Ball = null) -> void:
+	damage_taken = maxf(damage_taken + amount, 0.0)
 	_flash_timer = hit_flash_time
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
 	_enter_hitstun()
 	if source != null:
+		if Time.get_ticks_msec() < _suppress_knockback_until:
+			return
 		var direction := (global_position - source.global_position).normalized()
 		if direction == Vector2.ZERO:
 			direction = Vector2.RIGHT
 		direction = direction.rotated(_random_knockback_variance())
-		var scaled_impulse := damage_knockback_impulse * (1.0 + float(damage_taken) * 0.05)
+		var weight_scale: float = 1.0 / maxf(weight, 0.1)
+		var scaled_impulse: float = damage_knockback_impulse * (1.0 + float(damage_taken) * 0.05) * weight_scale
 		apply_impulse(direction * scaled_impulse)
+
+func suppress_knockback(duration_seconds: float) -> void:
+	_suppress_knockback_until = Time.get_ticks_msec() + int(duration_seconds * 1000.0)
 
 func _on_body_entered(body: Node) -> void:
 	if body is Ball:
@@ -151,7 +160,7 @@ func _set_hitstun(active: bool) -> void:
 	queue_redraw()
 
 func _update_hp_label() -> void:
-	hp_label.text = str(damage_taken)
+	hp_label.text = "%.1f" % damage_taken
 
 func _spawn_hitstun_particle() -> void:
 	var particle := Sprite2D.new()
@@ -214,6 +223,8 @@ func _random_velocity() -> Vector2:
 func _check_apex_double_jump() -> void:
 	if _apex_cooldown > 0.0:
 		return
+	if _double_jumps_used >= max_double_jumps:
+		return
 	if _is_on_floor():
 		return
 	if _last_velocity.y < 0.0 and linear_velocity.y >= 0.0 and abs(linear_velocity.y) < 40.0:
@@ -228,6 +239,7 @@ func _check_apex_double_jump() -> void:
 			apply_impulse(Vector2(x_impulse, -apex_jump_impulse))
 			_spawn_double_jump_ring()
 			_apex_cooldown = 0.3
+			_double_jumps_used += 1
 
 func _check_random_jump(delta: float) -> void:
 	if _jump_cooldown > 0.0:

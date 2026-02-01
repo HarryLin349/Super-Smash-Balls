@@ -4,7 +4,7 @@ extends Node2D
 @export var wall_thickness := 18.0
 
 @onready var ball_left: SwordBall = $BallLeft
-@onready var ball_right: SwordBall = $BallRight
+@onready var ball_right: DaggerBall = $BallRight
 @onready var wall_bottom: StaticBody2D = $Walls/WallBottom
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
@@ -66,16 +66,16 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 		visual.size = size
 		visual.position = -size * 0.5
 
-func _on_damage_taken_changed(ball_id: int, damage_taken: int) -> void:
+func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:
 	var damage_value := ball_left.damage if ball_id == 1 else ball_right.damage
 	_update_stats(ball_id, damage_taken, damage_value)
 
-func _on_damage_changed(ball_id: int, damage: int) -> void:
+func _on_damage_changed(ball_id: int, damage: float) -> void:
 	var damage_taken_value := ball_left.damage_taken if ball_id == 1 else ball_right.damage_taken
 	_update_stats(ball_id, damage_taken_value, damage)
 
-func _update_stats(ball_id: int, damage_taken: int, damage: int) -> void:
-	var text := "Damage Taken: %d\nDamage: %d" % [damage_taken, damage]
+func _update_stats(ball_id: int, damage_taken: float, damage: float) -> void:
+	var text := "Damage Taken: %.1f\nDamage: %.1f" % [damage_taken, damage]
 	if ball_id == 1:
 		left_stats.text = text
 	else:
