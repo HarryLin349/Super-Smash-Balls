@@ -27,6 +27,8 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hitstun_base_time := 0.5
 @export var hitstun_per_damage := 0.005
 @export var hitstun_tint_strength := 0.35
+@export var hitstun_trail_interval := 0.08
+@export var hitstun_trail_lifetime := 0.4
 
 var _last_clash_ms := 0
 static var _hit_stop_active := false
@@ -36,6 +38,7 @@ var _apex_cooldown := 0.0
 var _jump_cooldown := 0.0
 var _hitstun_time_left := 0.0
 var _in_hitstun := false
+var _trail_timer := 0.0
 
 var damage_taken := 0
 var damage := 1
@@ -45,7 +48,7 @@ var damage := 1
 @onready var sfx_slash: AudioStreamPlayer2D = $SfxSlash
 @onready var sfx_clash: AudioStreamPlayer2D = $SfxClash
 @onready var hp_label: Label = $HpLabel
-@onready var hitstun_trail: GPUParticles2D = $HitstunTrail
+@onready var hitstun_trail_layer: Node2D = $HitstunTrailLayer
 
 func _ready() -> void:
 	var material := PhysicsMaterial.new()
@@ -68,8 +71,6 @@ func _ready() -> void:
 	sword.monitoring = true
 	sword.monitorable = true
 
-	_setup_hitstun_trail()
-
 	queue_redraw()
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
@@ -83,6 +84,11 @@ func _physics_process(delta: float) -> void:
 		_hitstun_time_left = max(_hitstun_time_left - delta, 0.0)
 	if _in_hitstun and _hitstun_time_left <= 0.0:
 		_set_hitstun(false)
+	if _in_hitstun:
+		_trail_timer -= delta
+		if _trail_timer <= 0.0:
+			_spawn_hitstun_particle()
+			_trail_timer = hitstun_trail_interval
 	_check_apex_double_jump()
 	_check_random_jump(delta)
 	_apply_attraction_force()
@@ -194,46 +200,35 @@ func _set_hitstun(active: bool) -> void:
 	else:
 		material.bounce = 0.0
 		material.friction = 0.6
-	hitstun_trail.emitting = active
+	if active:
+		_trail_timer = 0.0
 	queue_redraw()
 
 func _update_hp_label() -> void:
 	hp_label.text = str(damage_taken)
 
-func _setup_hitstun_trail() -> void:
-	var texture := _make_smoke_texture()
-	hitstun_trail.texture = texture
-	hitstun_trail.z_index = -1
+func _spawn_hitstun_particle() -> void:
+	var particle := Sprite2D.new()
+	particle.texture = _make_smoke_texture()
+	particle.modulate = Color(1, 1, 1, 1.0)
+	particle.scale = Vector2(1.5, 1.5)
+	particle.z_index = -5
+	var host := get_tree().current_scene if get_tree().current_scene != null else hitstun_trail_layer
+	host.add_child(particle)
+	particle.global_position = global_position
 
-	var material := ParticleProcessMaterial.new()
-	material.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINT
-	material.direction = Vector3(0.0, -1.0, 0.0)
-	material.spread = 180.0
-	material.initial_velocity_min = 10.0
-	material.initial_velocity_max = 60.0
-	material.scale_min = 0.5
-	material.scale_max = 1.0
-	material.color = Color(1, 1, 1, 0.9)
-	material.gravity = Vector3.ZERO
-	material.damping_min = 0.0
-	material.damping_max = 0.0
-
-	var scale_curve := Curve.new()
-	scale_curve.add_point(Vector2(0.0, 1.0))
-	scale_curve.add_point(Vector2(1.0, 0.0))
-	var scale_curve_texture := CurveTexture.new()
-	scale_curve_texture.curve = scale_curve
-	material.scale_curve = scale_curve_texture
-
-	hitstun_trail.process_material = material
+	var tween := get_tree().create_tween()
+	tween.tween_property(particle, "scale", Vector2.ZERO, hitstun_trail_lifetime).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(particle, "modulate:a", 0.0, hitstun_trail_lifetime)
+	tween.tween_callback(particle.queue_free)
 
 func _make_smoke_texture() -> Texture2D:
-	var image := Image.create(16, 16, false, Image.FORMAT_RGBA8)
+	var image := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0))
-	var center := Vector2(7.5, 7.5)
-	var radius := 7.0
-	for y in range(16):
-		for x in range(16):
+	var center := Vector2(15.5, 15.5)
+	var radius := 14.0
+	for y in range(32):
+		for x in range(32):
 			var pos := Vector2(float(x), float(y))
 			if pos.distance_to(center) <= radius:
 				image.set_pixel(x, y, Color(1, 1, 1, 1))

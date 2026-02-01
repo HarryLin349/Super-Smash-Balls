@@ -28,13 +28,8 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text = "100"
 
-[node name="HitstunTrail" type="GPUParticles2D" parent="."]
-amount = 24
-emitting = false
-lifetime = 0.6
-one_shot = false
-speed_scale = 1.0
-local_coords = true
+[node name="HitstunTrailLayer" type="Node2D" parent="."]
+z_index = 5
 
 [node name="SwordPivot" type="Node2D" parent="."]
 
