@@ -13,7 +13,7 @@ size = Vector2(60, 14)
 
 [node name="Ball" type="RigidBody2D"]
 script = ExtResource( 1 )
-collision_layer = 1
+collision_layer = 4
 collision_mask = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -28,11 +28,19 @@ horizontal_alignment = 1
 vertical_alignment = 1
 text = "100"
 
+[node name="HitstunTrail" type="GPUParticles2D" parent="."]
+amount = 24
+emitting = false
+lifetime = 0.6
+one_shot = false
+speed_scale = 1.0
+local_coords = true
+
 [node name="SwordPivot" type="Node2D" parent="."]
 
 [node name="Sword" type="Area2D" parent="SwordPivot"]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 5
 monitoring = true
 monitorable = true
 
