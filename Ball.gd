@@ -13,10 +13,16 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hit_pause_time := 0.2
 @export var hit_pause_scale := 0.1
 @export var hit_flash_time := 0.08
+@export var apex_double_jump_chance := 0.2
+@export var apex_jump_impulse := 420.0
+@export var apex_horizontal_impulse := 180.0
+@export var attraction_force := 35.0
 
 var _last_clash_ms := 0
 static var _hit_stop_active := false
 var _flash_timer := 0.0
+var _last_velocity := Vector2.ZERO
+var _apex_cooldown := 0.0
 
 var hp := 100
 var damage := 1
@@ -38,6 +44,7 @@ func _ready() -> void:
 
 	_set_collision_radius()
 	linear_velocity = _random_velocity()
+	add_to_group("balls")
 
 	sword.position = Vector2(radius * 2, 0.0)
 	sword.body_entered.connect(_on_sword_body_entered)
@@ -52,9 +59,13 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	sword_pivot.rotation += sword_rotation_speed * delta
+	_apex_cooldown = max(_apex_cooldown - delta, 0.0)
+	_check_apex_double_jump()
+	_apply_attraction_force()
 	if _flash_timer > 0.0:
 		_flash_timer = max(_flash_timer - delta, 0.0)
 		queue_redraw()
+	_last_velocity = linear_velocity
 
 func _draw() -> void:
 	var draw_color := ball_color if _flash_timer <= 0.0 else Color(1, 1, 1)
@@ -136,3 +147,31 @@ func _random_velocity() -> Vector2:
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	return Vector2(rng.randf_range(-220.0, 220.0), rng.randf_range(-220.0, 220.0))
+
+func _check_apex_double_jump() -> void:
+	if _apex_cooldown > 0.0:
+		return
+	if _last_velocity.y < 0.0 and linear_velocity.y >= 0.0 and abs(linear_velocity.y) < 40.0:
+		var rng := RandomNumberGenerator.new()
+		rng.randomize()
+		if rng.randf() <= apex_double_jump_chance:
+			var x_impulse := rng.randf_range(-apex_horizontal_impulse, apex_horizontal_impulse)
+			apply_impulse(Vector2(x_impulse, -apex_jump_impulse))
+			_apex_cooldown = 0.3
+
+func _apply_attraction_force() -> void:
+	var other_ball := _get_other_ball()
+	if other_ball == null:
+		return
+	var direction := (other_ball.global_position - global_position)
+	if abs(direction.x) < 0.01:
+		return
+	var x_dir: float = signf(direction.x)
+	apply_force(Vector2(x_dir * attraction_force, 0.0))
+
+func _get_other_ball() -> Ball:
+	var balls: Array[Node] = get_tree().get_nodes_in_group("balls")
+	for node: Node in balls:
+		if node is Ball and node != self:
+			return node
+	return null
