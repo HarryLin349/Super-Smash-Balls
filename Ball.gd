@@ -31,7 +31,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var double_jump_ring_duration := 0.5
 @export var max_double_jumps := 1
 @export var weight := 1.0
-@export var damage_knockback_cooldown := 0.12
+@export var damage_knockback_cooldown := 0.0 # prev 0.12 to prevent chains
 
 static var _hit_stop_active := false
 var _flash_timer := 0.0
