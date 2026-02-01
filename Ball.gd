@@ -121,6 +121,7 @@ func take_damage(amount: int, source: Ball = null) -> void:
 		var direction := (global_position - source.global_position).normalized()
 		if direction == Vector2.ZERO:
 			direction = Vector2.RIGHT
+		direction = direction.rotated(_random_knockback_variance())
 		var scaled_impulse := damage_knockback_impulse * (1.0 + float(damage_taken) * 0.05)
 		apply_impulse(direction * scaled_impulse)
 
@@ -300,6 +301,11 @@ func _check_random_jump(delta: float) -> void:
 		var x_impulse := rng.randf_range(-random_jump_horizontal_impulse, random_jump_horizontal_impulse)
 		apply_impulse(Vector2(x_impulse, -random_jump_impulse))
 		_jump_cooldown = 0.35
+
+func _random_knockback_variance() -> float:
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	return deg_to_rad(rng.randf_range(-15.0, 15.0))
 
 func _apply_attraction_force() -> void:
 	var direction := stage_center - global_position
