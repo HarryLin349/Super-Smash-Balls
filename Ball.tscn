@@ -35,7 +35,7 @@ z_index = 5
 
 [node name="Sword" type="Area2D" parent="SwordPivot"]
 collision_layer = 2
-collision_mask = 5
+collision_mask = 6
 monitoring = true
 monitorable = true
 

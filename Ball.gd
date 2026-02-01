@@ -14,7 +14,7 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hit_pause_scale := 0.1
 @export var hit_flash_time := 0.08
 @export var apex_double_jump_chance := 0.2
-@export var apex_jump_impulse := 320.0
+@export var apex_jump_impulse := 700.0
 @export var apex_horizontal_impulse := 60.0
 @export var attraction_force := 800.0
 @export var damage_knockback_impulse := 280.0
@@ -22,7 +22,7 @@ signal damage_changed(ball_id: int, damage: int)
 @export var ball_bounce_damp := 0.13
 @export var floor_y := 0.0
 @export var random_jump_chance_per_second := 0.6
-@export var random_jump_impulse := 520.0
+@export var random_jump_impulse := 700.0
 @export var random_jump_horizontal_impulse := 60.0
 @export var hitstun_base_time := 0.5
 @export var hitstun_per_damage := 0.005
@@ -32,6 +32,7 @@ signal damage_changed(ball_id: int, damage: int)
 @export var attraction_speed_cap := 260.0
 @export var hitstun_drag_window := 0.2
 @export var hitstun_drag_strength := 900.0
+@export var double_jump_ring_duration := 0.5
 
 var _last_clash_ms := 0
 static var _hit_stop_active := false
@@ -240,6 +241,25 @@ func _make_smoke_texture() -> Texture2D:
 	var texture := ImageTexture.create_from_image(image)
 	return texture
 
+func _spawn_double_jump_ring() -> void:
+	var ring := Sprite2D.new()
+	ring.texture = _make_smoke_texture()
+	ring.modulate = Color(1, 1, 1, 0.9)
+	ring.scale = Vector2.ZERO
+	ring.z_index = -2
+	var host := get_tree().current_scene if get_tree().current_scene != null else hitstun_trail_layer
+	host.add_child(ring)
+	ring.global_position = global_position
+
+	var target_size := Vector2(radius * 2.4, radius * 0.4)
+	var texture_size := ring.texture.get_size()
+	var target_scale := Vector2(target_size.x / texture_size.x, target_size.y / texture_size.y)
+
+	var tween := get_tree().create_tween()
+	tween.tween_property(ring, "scale", target_scale, double_jump_ring_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(ring, "modulate:a", 0.0, double_jump_ring_duration)
+	tween.tween_callback(ring.queue_free)
+
 func _set_collision_radius() -> void:
 	var shape = $CollisionShape2D.shape
 	if shape is CircleShape2D:
@@ -254,6 +274,8 @@ func _random_velocity() -> Vector2:
 func _check_apex_double_jump() -> void:
 	if _apex_cooldown > 0.0:
 		return
+	if _is_on_floor():
+		return
 	if _last_velocity.y < 0.0 and linear_velocity.y >= 0.0 and abs(linear_velocity.y) < 40.0:
 		var rng := RandomNumberGenerator.new()
 		rng.randomize()
@@ -264,6 +286,7 @@ func _check_apex_double_jump() -> void:
 				x_dir = signf(horizontal_dir)
 			var x_impulse := x_dir * apex_horizontal_impulse
 			apply_impulse(Vector2(x_impulse, -apex_jump_impulse))
+			_spawn_double_jump_ring()
 			_apex_cooldown = 0.3
 
 func _check_random_jump(delta: float) -> void:
