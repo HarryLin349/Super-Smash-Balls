@@ -14,7 +14,7 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hit_pause_scale := 0.1
 @export var hit_flash_time := 0.08
 @export var apex_double_jump_chance := 0.2
-@export var apex_jump_impulse := 220.0
+@export var apex_jump_impulse := 320.0
 @export var apex_horizontal_impulse := 60.0
 @export var attraction_force := 800.0
 @export var damage_knockback_impulse := 280.0
@@ -22,13 +22,14 @@ signal damage_changed(ball_id: int, damage: int)
 @export var ball_bounce_damp := 0.13
 @export var floor_y := 0.0
 @export var random_jump_chance_per_second := 0.6
-@export var random_jump_impulse := 620.0
+@export var random_jump_impulse := 520.0
 @export var random_jump_horizontal_impulse := 60.0
 @export var hitstun_base_time := 0.5
 @export var hitstun_per_damage := 0.005
 @export var hitstun_tint_strength := 0.35
 @export var hitstun_trail_interval := 0.08
 @export var hitstun_trail_lifetime := 0.4
+@export var attraction_speed_cap := 260.0
 
 var _last_clash_ms := 0
 static var _hit_stop_active := false
@@ -277,7 +278,10 @@ func _apply_attraction_force() -> void:
 	var direction := stage_center - global_position
 	if direction.length() < 0.01:
 		return
-	apply_force(direction.normalized() * attraction_force)
+	var attraction_dir := direction.normalized()
+	var speed_along := linear_velocity.dot(attraction_dir)
+	if speed_along < attraction_speed_cap:
+		apply_force(attraction_dir * attraction_force)
 
 func _is_on_floor() -> bool:
 	return global_position.y + radius >= floor_y - 1.0 and abs(linear_velocity.y) < 20.0

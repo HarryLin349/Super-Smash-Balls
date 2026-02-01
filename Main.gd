@@ -23,7 +23,8 @@ func _layout_arena() -> void:
 	var center := viewport_size * 0.5
 
 	var floor_position := Vector2(viewport_size.x * 0.5, center.y + half + wall_thickness * 0.5)
-	_set_wall(wall_bottom, floor_position, Vector2(viewport_size.x, wall_thickness))
+	var floor_width := viewport_size.x * 3.0
+	_set_wall(wall_bottom, floor_position, Vector2(floor_width, wall_thickness))
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)
