@@ -11,12 +11,21 @@ extends Node2D
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
 
+var _stats_timer := 0.0
+
 func _ready() -> void:
 	call_deferred("_layout_arena")
 	_setup_balls()
 	_connect_signals()
 	_update_stats(ball_left.ball_id, ball_left.damage_taken, ball_left.damage)
 	_update_stats(ball_right.ball_id, ball_right.damage_taken, ball_right.damage)
+
+func _process(delta: float) -> void:
+	_stats_timer += delta
+	if _stats_timer >= 0.1:
+		_stats_timer = 0.0
+		_update_stats(ball_left.ball_id, ball_left.damage_taken, ball_left.damage)
+		_update_stats(ball_right.ball_id, ball_right.damage_taken, ball_right.damage)
 
 func _layout_arena() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -90,7 +99,8 @@ func _on_damage_changed(ball_id: int, damage: float) -> void:
 
 func _update_stats(ball_id: int, damage_taken: float, damage: float) -> void:
 	var rotation_value := ball_left.get_spin_speed() if ball_id == 1 else ball_right.get_spin_speed()
-	var text := "Damage Taken: %.1f\nDamage: %.1f\nSpin: %.2f" % [damage_taken, damage, rotation_value]
+	var speed_value := ball_left.linear_velocity.length() if ball_id == 1 else ball_right.linear_velocity.length()
+	var text := "Damage Taken: %.1f\nDamage: %.1f\nSpin: %.2f\nSpeed: %.1f" % [damage_taken, damage, rotation_value, speed_value]
 	if ball_id == 1:
 		left_stats.text = text
 	else:

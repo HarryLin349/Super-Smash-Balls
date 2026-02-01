@@ -4,6 +4,7 @@ class_name DaggerBall
 @export var dagger_rotation_multiplier := 2.0
 @export var dagger_damage_impulse_multiplier := 0.5
 @export var dagger_rotation_increment := 1.0
+@export var dagger_rotation_soft_cap := 45.0
 
 func _ready() -> void:
 	super._ready()
@@ -21,4 +22,6 @@ func _ready() -> void:
 func _on_weapon_body_entered(body: Node) -> void:
 	super._on_weapon_body_entered(body)
 	if body is Ball and body != self:
-		weapon_rotation_speed = absf(weapon_rotation_speed) + dagger_rotation_increment
+		var current := absf(weapon_rotation_speed)
+		var t := clampf((dagger_rotation_soft_cap - current) / dagger_rotation_soft_cap, 0.1, 1.0)
+		weapon_rotation_speed = current + dagger_rotation_increment * t
