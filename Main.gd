@@ -6,6 +6,8 @@ extends Node2D
 @onready var ball_left: SwordBall = $BallLeft
 @onready var ball_right: DaggerBall = $BallRight
 @onready var wall_bottom: StaticBody2D = $Walls/WallBottom
+@onready var wall_left: Wall = $Walls/WallLeft
+@onready var wall_right: Wall = $Walls/WallRight
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
 
@@ -25,6 +27,9 @@ func _layout_arena() -> void:
 	var floor_position := Vector2(viewport_size.x * 0.5, center.y + half + wall_thickness * 0.5)
 	var floor_width := viewport_size.x * 3.0
 	_set_wall(wall_bottom, floor_position, Vector2(floor_width, wall_thickness))
+	var wall_height := arena_size_value + wall_thickness * 2.0
+	_set_wall(wall_left, Vector2(0.0 - wall_thickness * 0.5, center.y), Vector2(wall_thickness, wall_height))
+	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5, center.y), Vector2(wall_thickness, wall_height))
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)
@@ -62,9 +67,18 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 	wall.physics_material_override = material
 	if wall.has_node("Visual"):
 		var visual: ColorRect = wall.get_node("Visual")
-		visual.color = Color(0, 0, 0)
+		if wall == wall_bottom:
+			visual.color = Color(0, 0, 0, 1)
+		else:
+			visual.color = Color(0, 0, 0, 0)
 		visual.size = size
 		visual.position = -size * 0.5
+	if wall.has_node("Sensor/CollisionShape2D"):
+		var sensor_shape: CollisionShape2D = wall.get_node("Sensor/CollisionShape2D")
+		var sensor_rect := sensor_shape.shape
+		if sensor_rect is RectangleShape2D:
+			var rect_sensor: RectangleShape2D = sensor_rect
+			rect_sensor.size = size
 
 func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:
 	var damage_value := ball_left.damage if ball_id == 1 else ball_right.damage

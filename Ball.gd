@@ -5,7 +5,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 
 @export var ball_id := 1
 @export var ball_color := Color(0.9, 0.2, 0.2)
-@export var radius := 30.0
+@export var radius := 40.0
 @export var hit_pause_time := 0.2
 @export var hit_pause_scale := 0.1
 @export var hit_flash_time := 0.08
@@ -101,7 +101,7 @@ func _draw() -> void:
 		draw_color = ball_color.lerp(Color(1, 1, 1), hitstun_tint_strength)
 	draw_circle(Vector2.ZERO, radius, draw_color)
 
-func take_damage(amount: float, source: Ball = null) -> void:
+func take_damage(amount: float, source: Ball = null, knockback_impulse: float = -1.0) -> void:
 	damage_taken = maxf(damage_taken + amount, 0.0)
 	_flash_timer = hit_flash_time
 	_update_hp_label()
@@ -120,11 +120,17 @@ func take_damage(amount: float, source: Ball = null) -> void:
 			direction = Vector2.RIGHT
 		direction = direction.rotated(_random_knockback_variance())
 		var weight_scale: float = 1.0 / maxf(weight, 0.1)
-		var scaled_impulse: float = damage_knockback_impulse * (1.0 + float(damage_taken) * 0.05) * weight_scale
+		var base_impulse := damage_knockback_impulse
+		if knockback_impulse >= 0.0:
+			base_impulse = knockback_impulse
+		var scaled_impulse: float = base_impulse * (1.0 + float(damage_taken) * 0.05) * weight_scale
 		apply_impulse(direction * scaled_impulse)
 
 func suppress_knockback(duration_seconds: float) -> void:
 	_suppress_knockback_until = Time.get_ticks_msec() + int(duration_seconds * 1000.0)
+
+func is_in_hitstun() -> bool:
+	return _in_hitstun
 
 func _on_body_entered(body: Node) -> void:
 	if body is Ball:

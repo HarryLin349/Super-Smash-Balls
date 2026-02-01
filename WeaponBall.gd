@@ -7,8 +7,9 @@ var _last_clash_ms := 0
 
 @export var damage := 1.0
 @export var damage_increment := 0.0
+@export var weapon_hit_knockback := 280.0
 @export var weapon_rotation_speed := 5
-@export var weapon_orbit_radius := 60.0
+@export var weapon_orbit_radius := 70.0
 @export var clash_impulse := 60.0
 @export var clash_knockback_suppress_time := 0.08
 
@@ -46,7 +47,7 @@ func _on_weapon_body_entered(body: Node) -> void:
 	if body is Ball:
 		sfx_slash.play()
 		_hit_stop()
-		body.take_damage(damage, self)
+		body.take_damage(damage, self, weapon_hit_knockback)
 		damage += damage_increment
 		emit_signal("damage_changed", ball_id, damage)
 
