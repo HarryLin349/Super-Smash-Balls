@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3]
 
-[ext_resource type="Script" path="res://Ball.gd" id=1]
+[ext_resource type="Script" path="res://SwordBall.gd" id=1]
 [ext_resource type="Texture2D" path="res://sword.png" id=2]
 [ext_resource type="AudioStream" path="res://sfx/sword-slash.mp3" id=3]
 [ext_resource type="AudioStream" path="res://sfx/metal-clang.mp3" id=4]

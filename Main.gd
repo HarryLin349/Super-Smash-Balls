@@ -3,8 +3,8 @@ extends Node2D
 @export var arena_size := 520.0
 @export var wall_thickness := 18.0
 
-@onready var ball_left: Ball = $BallLeft
-@onready var ball_right: Ball = $BallRight
+@onready var ball_left: SwordBall = $BallLeft
+@onready var ball_right: SwordBall = $BallRight
 @onready var wall_bottom: StaticBody2D = $Walls/WallBottom
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats

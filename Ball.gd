@@ -7,9 +7,6 @@ signal damage_changed(ball_id: int, damage: int)
 @export var ball_id := 1
 @export var ball_color := Color(0.9, 0.2, 0.2)
 @export var radius := 30.0
-@export var sword_rotation_speed := 3.8
-@export var sword_orbit_radius := 36.0
-@export var clash_impulse := 260.0
 @export var hit_pause_time := 0.2
 @export var hit_pause_scale := 0.1
 @export var hit_flash_time := 0.08
@@ -34,7 +31,6 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hitstun_drag_strength := 900.0
 @export var double_jump_ring_duration := 0.5
 
-var _last_clash_ms := 0
 static var _hit_stop_active := false
 var _flash_timer := 0.0
 var _last_velocity := Vector2.ZERO
@@ -47,10 +43,6 @@ var _trail_timer := 0.0
 var damage_taken := 0
 var damage := 1
 
-@onready var sword_pivot: Node2D = $SwordPivot
-@onready var sword: Area2D = $SwordPivot/Sword
-@onready var sfx_slash: AudioStreamPlayer2D = $SfxSlash
-@onready var sfx_clash: AudioStreamPlayer2D = $SfxClash
 @onready var hp_label: Label = $HpLabel
 @onready var hitstun_trail_layer: Node2D = $HitstunTrailLayer
 
@@ -69,19 +61,12 @@ func _ready() -> void:
 	max_contacts_reported = 4
 	body_entered.connect(_on_body_entered)
 
-	sword.position = Vector2(radius * 2, 0.0)
-	sword.body_entered.connect(_on_sword_body_entered)
-	sword.area_entered.connect(_on_sword_area_entered)
-	sword.monitoring = true
-	sword.monitorable = true
-
 	queue_redraw()
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
 	emit_signal("damage_changed", ball_id, damage)
 
 func _physics_process(delta: float) -> void:
-	sword_pivot.rotation += sword_rotation_speed * delta
 	_apex_cooldown = max(_apex_cooldown - delta, 0.0)
 	_jump_cooldown = max(_jump_cooldown - delta, 0.0)
 	if _hitstun_time_left > 0.0:
@@ -128,52 +113,6 @@ func take_damage(amount: int, source: Ball = null) -> void:
 func _on_body_entered(body: Node) -> void:
 	if body is Ball:
 		linear_velocity *= ball_bounce_damp
-
-func _on_sword_body_entered(body: Node) -> void:
-	if body == self:
-		return
-	if body is Ball:
-		sfx_slash.play()
-		_hit_stop()
-		body.take_damage(damage, self)
-		damage += 1
-		emit_signal("damage_changed", ball_id, damage)
-
-func _on_sword_area_entered(area: Area2D) -> void:
-	var now := Time.get_ticks_msec()
-	if now - _last_clash_ms < 120:
-		return
-	if area == sword:
-		return
-	var other_ball := _find_ball_owner(area)
-	if other_ball == null or other_ball == self:
-		return
-	_last_clash_ms = now
-	sword_rotation_speed = -sword_rotation_speed
-	sfx_clash.play()
-	var direction := (global_position - other_ball.global_position).normalized()
-	if direction == Vector2.ZERO:
-		direction = Vector2.RIGHT
-	apply_impulse(direction * clash_impulse)
-	other_ball._on_clash_from(self)
-
-func _on_clash_from(other_ball: Ball) -> void:
-	_last_clash_ms = Time.get_ticks_msec()
-	sword_rotation_speed = -sword_rotation_speed
-	var direction := (global_position - other_ball.global_position).normalized()
-	if direction == Vector2.ZERO:
-		direction = Vector2.LEFT
-	apply_impulse(direction * clash_impulse)
-
-func _find_ball_owner(node: Node) -> Ball:
-	var current: Node = node
-	for i in range(4):
-		if current is Ball:
-			return current
-		if current == null:
-			return null
-		current = current.get_parent()
-	return null
 
 func _hit_stop() -> void:
 	if _hit_stop_active:
