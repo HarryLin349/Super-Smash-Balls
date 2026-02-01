@@ -30,6 +30,8 @@ signal damage_changed(ball_id: int, damage: int)
 @export var hitstun_trail_interval := 0.08
 @export var hitstun_trail_lifetime := 0.4
 @export var attraction_speed_cap := 260.0
+@export var hitstun_drag_window := 0.2
+@export var hitstun_drag_strength := 900.0
 
 var _last_clash_ms := 0
 static var _hit_stop_active := false
@@ -85,6 +87,8 @@ func _physics_process(delta: float) -> void:
 		_hitstun_time_left = max(_hitstun_time_left - delta, 0.0)
 	if _in_hitstun and _hitstun_time_left <= 0.0:
 		_set_hitstun(false)
+	if _in_hitstun and _hitstun_time_left <= hitstun_drag_window:
+		_apply_hitstun_drag()
 	if _in_hitstun:
 		_trail_timer -= delta
 		if _trail_timer <= 0.0:
@@ -282,6 +286,14 @@ func _apply_attraction_force() -> void:
 	var speed_along := linear_velocity.dot(attraction_dir)
 	if speed_along < attraction_speed_cap:
 		apply_force(attraction_dir * attraction_force)
+
+func _apply_hitstun_drag() -> void:
+	var speed := linear_velocity.length()
+	if speed < 1.0:
+		return
+	var drag_dir := -linear_velocity.normalized()
+	var drag_scale: float = clampf(speed / attraction_speed_cap, 0.3, 1.0)
+	apply_force(drag_dir * hitstun_drag_strength * drag_scale)
 
 func _is_on_floor() -> bool:
 	return global_position.y + radius >= floor_y - 1.0 and abs(linear_velocity.y) < 20.0
