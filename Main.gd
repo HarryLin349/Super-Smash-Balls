@@ -39,7 +39,7 @@ func _setup_balls() -> void:
 	ball_left.ball_color = Color(0.9, 0.2, 0.2)
 	ball_right.ball_id = 2
 	ball_right.ball_color = Color(0.2, 0.8, 0.2)
-	ball_right.sword_rotation_speed = -abs(ball_right.sword_rotation_speed)
+	ball_right.set_spin_direction(-1.0)
 
 func _connect_signals() -> void:
 	ball_left.damage_taken_changed.connect(_on_damage_taken_changed)
@@ -75,7 +75,8 @@ func _on_damage_changed(ball_id: int, damage: float) -> void:
 	_update_stats(ball_id, damage_taken_value, damage)
 
 func _update_stats(ball_id: int, damage_taken: float, damage: float) -> void:
-	var text := "Damage Taken: %.1f\nDamage: %.1f" % [damage_taken, damage]
+	var rotation_value := ball_left.get_spin_speed() if ball_id == 1 else ball_right.get_spin_speed()
+	var text := "Damage Taken: %.1f\nDamage: %.1f\nSpin: %.2f" % [damage_taken, damage, rotation_value]
 	if ball_id == 1:
 		left_stats.text = text
 	else:

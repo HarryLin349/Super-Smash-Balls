@@ -31,6 +31,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var double_jump_ring_duration := 0.5
 @export var max_double_jumps := 1
 @export var weight := 1.0
+@export var damage_knockback_cooldown := 0.12
 
 static var _hit_stop_active := false
 var _flash_timer := 0.0
@@ -42,6 +43,7 @@ var _in_hitstun := false
 var _trail_timer := 0.0
 var _double_jumps_used := 0
 var _suppress_knockback_until := 0
+var _last_damage_knockback_ms := 0
 
 var damage_taken := 0.0
 
@@ -108,6 +110,11 @@ func take_damage(amount: float, source: Ball = null) -> void:
 	if source != null:
 		if Time.get_ticks_msec() < _suppress_knockback_until:
 			return
+		var now := Time.get_ticks_msec()
+		if now - _last_damage_knockback_ms < int(damage_knockback_cooldown * 1000.0):
+			return
+		_last_damage_knockback_ms = now
+		linear_velocity *= 0.1
 		var direction := (global_position - source.global_position).normalized()
 		if direction == Vector2.ZERO:
 			direction = Vector2.RIGHT
