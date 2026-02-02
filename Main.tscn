@@ -44,6 +44,12 @@ shape = SubResource("2")
 [node name="Visual" type="ColorRect" parent="Walls/WallLeft"]
 color = Color(0, 0, 0, 0)
 
+[node name="HpLabel" type="Label" parent="Walls/WallLeft/Visual"]
+layout_mode = 0
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="Sensor" type="Area2D" parent="Walls/WallLeft"]
 collision_layer = 0
 collision_mask = 4
@@ -59,6 +65,12 @@ shape = SubResource("3")
 
 [node name="Visual" type="ColorRect" parent="Walls/WallRight"]
 color = Color(0, 0, 0, 0)
+
+[node name="HpLabel" type="Label" parent="Walls/WallRight/Visual"]
+layout_mode = 0
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Sensor" type="Area2D" parent="Walls/WallRight"]
 collision_layer = 0

@@ -9,7 +9,7 @@ class_name Wall
 
 @onready var visual: ColorRect = $Visual
 @onready var sensor: Area2D = $Sensor
-@onready var hp_label: Label = $HpLabel
+@onready var hp_label: Label = $Visual/HpLabel
 
 var hp := 0
 
@@ -40,7 +40,7 @@ func _on_sensor_body_entered(body: Node) -> void:
 	var ball: Ball = body
 	var speed := ball.linear_velocity.length()
 	if ball.is_in_hitstun():
-		var damage := int(round(abs(speed / 300.0)))
+		var damage := int(ceil(abs(speed / 60.0)))
 		if damage > 0:
 			hp -= damage
 			if hp <= 0:

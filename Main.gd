@@ -13,7 +13,7 @@ extends Node2D
 @onready var wall_left_x_label: Label = $UI/WallLeftX
 @onready var wall_right_x_label: Label = $UI/WallRightX
 
-var walldist := 70
+var walldist := 200
 
 var _stats_timer := 0.0
 
@@ -87,10 +87,6 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 			visual.color = Color(0, 0, 0, 1)
 		visual.size = size
 		visual.position = -size * 0.5
-	if wall is Wall and wall.has_node("HpLabel"):
-		var hp_label: Label = wall.get_node("HpLabel")
-		hp_label.position = -size * 0.5
-		hp_label.size = size
 	if wall.has_node("Sensor/CollisionShape2D"):
 		var sensor_shape: CollisionShape2D = wall.get_node("Sensor/CollisionShape2D")
 		var sensor_rect := sensor_shape.shape
