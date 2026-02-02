@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bd13wr6mxa1g1"
+path="res://.godot/imported/vc_narration_characall_diddy.wav-a7a0fcb2c932e7be83269b81e65fad60.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_diddy.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_diddy.wav-a7a0fcb2c932e7be83269b81e65fad60.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

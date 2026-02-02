@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dowcg8eff20d2"
+path="res://.godot/imported/vc_narration_characall_snake.wav-f86a7bbcf5a0d03ef8c37e2b43fc7d5c.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_snake.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_snake.wav-f86a7bbcf5a0d03ef8c37e2b43fc7d5c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

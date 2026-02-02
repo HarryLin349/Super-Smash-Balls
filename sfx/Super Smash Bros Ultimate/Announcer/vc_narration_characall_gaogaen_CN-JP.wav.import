@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://ose3upihxt6q"
+path="res://.godot/imported/vc_narration_characall_gaogaen_CN-JP.wav-2a7f492b3113083897da174a228281ff.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_gaogaen_CN-JP.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_gaogaen_CN-JP.wav-2a7f492b3113083897da174a228281ff.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

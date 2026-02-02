@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://doc1idqqoepc3"
+path="res://.godot/imported/vc_menu_narration_nicecall_EU.wav-2c3d7cfd58e52fa786458d5a7df995b1.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_menu_narration_nicecall_EU.wav"
+dest_files=["res://.godot/imported/vc_menu_narration_nicecall_EU.wav-2c3d7cfd58e52fa786458d5a7df995b1.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://so58m34h7e67"
+path="res://.godot/imported/vc_narration_characall_pikminalph_CN-JP-KR.wav-d931c2334237bb58d25036ed3ac7f4ec.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_pikminalph_CN-JP-KR.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_pikminalph_CN-JP-KR.wav-d931c2334237bb58d25036ed3ac7f4ec.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

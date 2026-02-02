@@ -10,8 +10,8 @@ var _last_clash_ms := 0
 @export var weapon_hit_knockback := 280.0
 @export var weapon_rotation_speed := 5
 @export var weapon_orbit_radius := 70.0
-@export var clash_impulse := 60.0
-@export var clash_knockback_suppress_time := 0.08
+@export var clash_impulse := 260.0
+@export var clash_knockback_suppress_time := 0.01
 
 @onready var weapon_pivot: Node2D = $SwordPivot
 @onready var weapon: Area2D = $SwordPivot/Sword

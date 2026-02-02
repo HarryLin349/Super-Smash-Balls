@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://rex27yfohu8n"
+path="res://.godot/imported/vc_narration_characall_lucina_CN-JP-KR.wav-b7f6b08d16c1641bfa030e4e54f0f021.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_lucina_CN-JP-KR.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_lucina_CN-JP-KR.wav-b7f6b08d16c1641bfa030e4e54f0f021.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

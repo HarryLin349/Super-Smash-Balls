@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cl8sccd604ckm"
+path="res://.godot/imported/vc_narration_characall_richter_CN-JP.wav-6043165dabbfb68fd7b810c44eb3532d.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_richter_CN-JP.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_richter_CN-JP.wav-6043165dabbfb68fd7b810c44eb3532d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

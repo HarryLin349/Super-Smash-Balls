@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dhmr1gmfkh5l7"
+path="res://.godot/imported/vc_narration_characall_murabito.wav-4c989b7aa26430cc83dc3c64f080b8ca.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_murabito.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_murabito.wav-4c989b7aa26430cc83dc3c64f080b8ca.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

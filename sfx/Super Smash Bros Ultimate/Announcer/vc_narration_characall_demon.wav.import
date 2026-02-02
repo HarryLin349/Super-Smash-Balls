@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cnwiysq05uyfg"
+path="res://.godot/imported/vc_narration_characall_demon.wav-4eda5a724064c9d84c284f3b45f0b636.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_demon.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_demon.wav-4eda5a724064c9d84c284f3b45f0b636.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

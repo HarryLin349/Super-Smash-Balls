@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dv8k511ysq4oe"
+path="res://.godot/imported/vc_narration_characall_iceclimber_KR.wav-29e7aba218dc271310cb762dcbb5c9f4.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_iceclimber_KR.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_iceclimber_KR.wav-29e7aba218dc271310cb762dcbb5c9f4.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

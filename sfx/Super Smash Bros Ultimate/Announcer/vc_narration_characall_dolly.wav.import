@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bshbbupnw10ne"
+path="res://.godot/imported/vc_narration_characall_dolly.wav-f580c8369b40536d18e57d6e581b486f.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_dolly.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_dolly.wav-f580c8369b40536d18e57d6e581b486f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

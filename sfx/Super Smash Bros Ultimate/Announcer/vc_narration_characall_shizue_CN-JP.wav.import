@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://p1t0og66dvay"
+path="res://.godot/imported/vc_narration_characall_shizue_CN-JP.wav-65e63df63ea4c91eeb0b9b9d78db3467.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_shizue_CN-JP.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_shizue_CN-JP.wav-65e63df63ea4c91eeb0b9b9d78db3467.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

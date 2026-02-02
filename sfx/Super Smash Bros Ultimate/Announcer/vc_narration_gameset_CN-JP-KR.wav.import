@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://4xlaurd1kcmy"
+path="res://.godot/imported/vc_narration_gameset_CN-JP-KR.wav-70edc6db135e73a26569e411d5776e8e.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_gameset_CN-JP-KR.wav"
+dest_files=["res://.godot/imported/vc_narration_gameset_CN-JP-KR.wav-70edc6db135e73a26569e411d5776e8e.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://c3pm0q7kggv66"
+path="res://.godot/imported/vc_narration_result_win_allbattle.wav-1dbb212031d32f5a7a006cc8fa9886c0.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_result_win_allbattle.wav"
+dest_files=["res://.godot/imported/vc_narration_result_win_allbattle.wav-1dbb212031d32f5a7a006cc8fa9886c0.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

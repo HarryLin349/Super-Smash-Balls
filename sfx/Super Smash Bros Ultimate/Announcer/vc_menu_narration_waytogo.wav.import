@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://gyun7alsiau3"
+path="res://.godot/imported/vc_menu_narration_waytogo.wav-42fb4ed1e93e0c7ba03a5ace0eaa17fa.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_menu_narration_waytogo.wav"
+dest_files=["res://.godot/imported/vc_menu_narration_waytogo.wav-42fb4ed1e93e0c7ba03a5ace0eaa17fa.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b64jjeq6bncc2"
+path="res://.godot/imported/vc_narration_characall_duckhunt_EU.wav-f84c76a7a86fb665852f09a83f3ff54d.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_duckhunt_EU.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_duckhunt_EU.wav-f84c76a7a86fb665852f09a83f3ff54d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://bga06ikapyd8k"
+path="res://.godot/imported/vc_narration_characall_rosetta_KR.wav-ead83b0a98a1b969bfac7310242ceee4.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_rosetta_KR.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_rosetta_KR.wav-ead83b0a98a1b969bfac7310242ceee4.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

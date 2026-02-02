@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dhfjlvbfjsqv6"
+path="res://.godot/imported/vc_narration_characall_mario.wav-c861c0347f6277ec4d9c7020b839b79c.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_mario.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_mario.wav-c861c0347f6277ec4d9c7020b839b79c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

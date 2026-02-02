@@ -44,6 +44,7 @@ var _trail_timer := 0.0
 var _double_jumps_used := 0
 var _suppress_knockback_until := 0
 var _last_damage_knockback_ms := 0
+var _smoke_texture: Texture2D = null
 
 var damage_taken := 0.0
 
@@ -65,6 +66,7 @@ func _ready() -> void:
 	max_contacts_reported = 4
 	body_entered.connect(_on_body_entered)
 
+	_smoke_texture = _make_smoke_texture()
 	queue_redraw()
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
@@ -177,7 +179,7 @@ func _update_hp_label() -> void:
 
 func _spawn_hitstun_particle() -> void:
 	var particle := Sprite2D.new()
-	particle.texture = _make_smoke_texture()
+	particle.texture = _smoke_texture
 	particle.modulate = Color(1, 1, 1, 1.0)
 	particle.scale = Vector2(1.5, 1.5)
 	particle.z_index = -5
@@ -191,6 +193,8 @@ func _spawn_hitstun_particle() -> void:
 	tween.tween_callback(particle.queue_free)
 
 func _make_smoke_texture() -> Texture2D:
+	if _smoke_texture != null:
+		return _smoke_texture
 	var image := Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	image.fill(Color(0, 0, 0, 0))
 	var center := Vector2(15.5, 15.5)
@@ -205,7 +209,7 @@ func _make_smoke_texture() -> Texture2D:
 
 func _spawn_double_jump_ring() -> void:
 	var ring := Sprite2D.new()
-	ring.texture = _make_smoke_texture()
+	ring.texture = _smoke_texture
 	ring.modulate = Color(1, 1, 1, 0.9)
 	ring.scale = Vector2.ZERO
 	ring.z_index = -2

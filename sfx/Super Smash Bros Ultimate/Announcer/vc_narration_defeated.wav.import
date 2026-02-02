@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dpqrfsmh805ej"
+path="res://.godot/imported/vc_narration_defeated.wav-ad70d121077a596d1d79df687f1a5bd6.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_defeated.wav"
+dest_files=["res://.godot/imported/vc_narration_defeated.wav-ad70d121077a596d1d79df687f1a5bd6.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

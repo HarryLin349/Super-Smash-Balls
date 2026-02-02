@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://d0i6gx34ds4j7"
+path="res://.godot/imported/vc_menu_narration_challengersapproach.wav-993c720d63e50b1966afe193c9786620.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_menu_narration_challengersapproach.wav"
+dest_files=["res://.godot/imported/vc_menu_narration_challengersapproach.wav-993c720d63e50b1966afe193c9786620.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

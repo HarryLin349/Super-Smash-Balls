@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dmpq7qktw5ayl"
+path="res://.godot/imported/vc_narration_characall_yoshi.wav-f8d3d7ae91f5fc73b5ec36b8c53fa539.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_yoshi.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_yoshi.wav-f8d3d7ae91f5fc73b5ec36b8c53fa539.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

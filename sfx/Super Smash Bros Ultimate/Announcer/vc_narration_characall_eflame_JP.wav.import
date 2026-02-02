@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cyc4pmc4fgt46"
+path="res://.godot/imported/vc_narration_characall_eflame_JP.wav-08a85e73c1127117eec4c5eee41cd994.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_eflame_JP.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_eflame_JP.wav-08a85e73c1127117eec4c5eee41cd994.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

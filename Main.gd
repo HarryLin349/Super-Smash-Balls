@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var arena_size := 520.0
-@export var wall_thickness := 18.0
+@export var wall_thickness := 54.0
 
 @onready var ball_left: SwordBall = $BallLeft
 @onready var ball_right: DaggerBall = $BallRight
@@ -10,6 +10,10 @@ extends Node2D
 @onready var wall_right: Wall = $Walls/WallRight
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
+@onready var wall_left_x_label: Label = $UI/WallLeftX
+@onready var wall_right_x_label: Label = $UI/WallRightX
+
+var walldist := 70
 
 var _stats_timer := 0.0
 
@@ -37,8 +41,8 @@ func _layout_arena() -> void:
 	var floor_width := viewport_size.x * 3.0
 	_set_wall(wall_bottom, floor_position, Vector2(floor_width, wall_thickness))
 	var wall_height := arena_size_value + wall_thickness * 2.0
-	_set_wall(wall_left, Vector2(0.0 - wall_thickness * 0.5, center.y), Vector2(wall_thickness, wall_height))
-	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5, center.y), Vector2(wall_thickness, wall_height))
+	_set_wall(wall_left, Vector2(0.0 - wall_thickness * 0.5 + walldist, center.y), Vector2(wall_thickness, wall_height))
+	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5 - walldist, center.y), Vector2(wall_thickness, wall_height))
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)
@@ -47,6 +51,7 @@ func _layout_arena() -> void:
 	ball_right.stage_center = center
 	ball_left.floor_y = floor_y
 	ball_right.floor_y = floor_y
+	_update_wall_x_labels()
 
 func _setup_balls() -> void:
 	ball_left.ball_id = 1
@@ -76,12 +81,16 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 	wall.physics_material_override = material
 	if wall.has_node("Visual"):
 		var visual: ColorRect = wall.get_node("Visual")
-		if wall == wall_bottom:
-			visual.color = Color(0, 0, 0, 1)
+		if wall is Wall:
+			visual.color = wall.normal_color
 		else:
-			visual.color = Color(0, 0, 0, 0)
+			visual.color = Color(0, 0, 0, 1)
 		visual.size = size
 		visual.position = -size * 0.5
+	if wall is Wall and wall.has_node("HpLabel"):
+		var hp_label: Label = wall.get_node("HpLabel")
+		hp_label.position = -size * 0.5
+		hp_label.size = size
 	if wall.has_node("Sensor/CollisionShape2D"):
 		var sensor_shape: CollisionShape2D = wall.get_node("Sensor/CollisionShape2D")
 		var sensor_rect := sensor_shape.shape
@@ -105,3 +114,7 @@ func _update_stats(ball_id: int, damage_taken: float, damage: float) -> void:
 		left_stats.text = text
 	else:
 		right_stats.text = text
+
+func _update_wall_x_labels() -> void:
+	wall_left_x_label.text = "Wall L X: %.1f" % wall_left.global_position.x
+	wall_right_x_label.text = "Wall R X: %.1f" % wall_right.global_position.x

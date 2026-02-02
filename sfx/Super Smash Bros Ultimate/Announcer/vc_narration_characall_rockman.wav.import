@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://6c8d7dlwywd6"
+path="res://.godot/imported/vc_narration_characall_rockman.wav-40a5d12099e62c25cbc0658e1396bfea.sample"
+
+[deps]
+
+source_file="res://sfx/Super Smash Bros Ultimate/Announcer/vc_narration_characall_rockman.wav"
+dest_files=["res://.godot/imported/vc_narration_characall_rockman.wav-40a5d12099e62c25cbc0658e1396bfea.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0
