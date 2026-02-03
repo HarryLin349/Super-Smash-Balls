@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://DaggerBall.gd" id=1]
 [ext_resource type="Texture2D" path="res://Daggericon.png" id=2]
 [ext_resource type="AudioStream" path="res://sfx/sword-slash.mp3" id=3]
 [ext_resource type="AudioStream" path="res://sfx/metal-clang.mp3" id=4]
+[ext_resource type="AudioStream" path="res://sfx/low-floor-tom.mp3" id=5]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 30.0
@@ -54,5 +55,10 @@ autoplay = false
 
 [node name="SfxClash" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource( 4 )
+volume_db = -6.0
+autoplay = false
+
+[node name="SfxFloorTom" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 5 )
 volume_db = -6.0
 autoplay = false

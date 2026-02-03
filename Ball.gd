@@ -45,11 +45,13 @@ var _double_jumps_used := 0
 var _suppress_knockback_until := 0
 var _last_damage_knockback_ms := 0
 var _smoke_texture: Texture2D = null
+var _last_hitstun_bounce_ms := 0
 
 var damage_taken := 0.0
 
 @onready var hp_label: Label = $HpLabel
 @onready var hitstun_trail_layer: Node2D = $HitstunTrailLayer
+@onready var sfx_floor_tom: AudioStreamPlayer2D = $SfxFloorTom
 
 func _ready() -> void:
 	var material := PhysicsMaterial.new()
@@ -94,6 +96,7 @@ func _physics_process(delta: float) -> void:
 	if _flash_timer > 0.0:
 		_flash_timer = max(_flash_timer - delta, 0.0)
 		queue_redraw()
+	_update_hp_label_transform()
 	_last_velocity = linear_velocity
 
 func _draw() -> void:
@@ -138,6 +141,8 @@ func is_in_hitstun() -> bool:
 func _on_body_entered(body: Node) -> void:
 	if body is Ball:
 		linear_velocity *= ball_bounce_damp
+	if _in_hitstun and (body is Wall or body is Floor):
+		_play_hitstun_bounce_sfx()
 
 func _hit_stop() -> void:
 	if _hit_stop_active:
@@ -183,6 +188,19 @@ func _setup_hp_label() -> void:
 	hp_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	hp_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 	hp_label.add_theme_constant_override("outline_size", 12)
+
+func _update_hp_label_transform() -> void:
+	hp_label.rotation = -rotation
+
+func _play_hitstun_bounce_sfx() -> void:
+	if sfx_floor_tom == null:
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_hitstun_bounce_ms < 80:
+		return
+	_last_hitstun_bounce_ms = now
+	sfx_floor_tom.pitch_scale = randf_range(0.8, 1.2)
+	sfx_floor_tom.play()
 
 func _spawn_hitstun_particle() -> void:
 	var particle := Sprite2D.new()

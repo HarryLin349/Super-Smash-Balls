@@ -29,10 +29,10 @@ func _ready() -> void:
 		hp_label.offset_bottom = 0.0
 		hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		hp_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		hp_label.add_theme_font_size_override("font_size", 28)
+		hp_label.add_theme_font_size_override("font_size", 32)
 		hp_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 		hp_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-		hp_label.add_theme_constant_override("outline_size", 4)
+		hp_label.add_theme_constant_override("outline_size", 12)
 		hp_label.z_index = 10
 		hp_label.z_as_relative = false
 
@@ -41,20 +41,18 @@ func _on_sensor_body_entered(body: Node) -> void:
 		return
 	var ball: Ball = body
 	var speed := ball.linear_velocity.length()
+	hp -= 1
 	if ball.is_in_hitstun():
 		var damage: int = max(int(ceil(abs(speed / 100.0))), 1)
-		if damage > 0:
-			hp -= damage
-			if hp <= 0:
-				_disable_wall()
-			else:
-				_flash(damage_color)
-				_update_hp_label()
-		else:
-			_flash(bounce_color)
+		hp -= damage
+		_flash(damage_color)
 	else:
-		hp -= 1
 		_flash(bounce_color)
+	if hp <= 0:
+		_disable_wall()
+	else:
+		_update_hp_label()
+
 
 func _flash(color: Color) -> void:
 	visual.color = color
