@@ -222,14 +222,16 @@ func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	var spikes := 18
-	var total_length : float = max(210.0, distance_to_center * 0.6)
+	var total_length : float = max(315.0, distance_to_center * 0.9)
 	var half := total_length * 0.5
 	var dir := Vector2.RIGHT if position_value.x < viewport_center_x else Vector2.LEFT
+	var stages := PackedFloat32Array([1.0, 0.7, 0.95, 0.4, 0.8, 0.6, 0.6, 0.0])
+	var stage_duration := 0.08
 	for i in range(spikes):
 		var t := (float(i) + 0.5) / float(spikes)
 		var y_pos : float = lerp(-half * 0.3, half * 0.3, t)
-		var length := rng.randf_range(total_length * 0.6, total_length * 1.0)
-		var thickness := rng.randf_range(6.0, 12.0)
+		var length := rng.randf_range(total_length * 0.8, total_length * 1.0)
+		var thickness := rng.randf_range(10.0, 18.0)
 		var tri := Polygon2D.new()
 		tri.color = base_color.lerp(Color(1, 1, 1, 1), rng.randf_range(0.3, 0.8))
 		tri.polygon = PackedVector2Array([
@@ -239,27 +241,21 @@ func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
 		])
 		tri.z_index = 21
 		effect.add_child(tri)
-		var jitter_target := rng.randf_range(total_length * 0.4, total_length * 1.1)
 		var tween := get_tree().create_tween()
-		tween.tween_method(func(value: float) -> void:
-			tri.polygon = PackedVector2Array([
-				Vector2(0.0, y_pos - thickness * 0.5),
-				Vector2(0.0, y_pos + thickness * 0.5),
-				dir * value + Vector2(0.0, y_pos)
-			])
-		, length, jitter_target, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		for stage in stages:
+			var target := length * stage
+			tween.tween_method(func(value: float) -> void:
+				tri.polygon = PackedVector2Array([
+					Vector2(0.0, y_pos - thickness * 0.5),
+					Vector2(0.0, y_pos + thickness * 0.5),
+					dir * value + Vector2(0.0, y_pos)
+				])
+			, length, target, stage_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
-	var flash := Line2D.new()
-	flash.width = 6.0
-	flash.default_color = Color(1, 1, 1, 1)
-	flash.points = PackedVector2Array([Vector2(0.0, -half * 0.25), dir * total_length + Vector2(0.0, -half * 0.25)])
-	flash.z_index = 22
-	effect.add_child(flash)
-
-	var tween := get_tree().create_tween()
-	tween.tween_property(effect, "scale", Vector2(1.25, 1.25), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(effect, "modulate:a", 0.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.tween_callback(effect.queue_free)
+	var final_tween := get_tree().create_tween()
+	var total_time := stage_duration * float(stages.size())
+	final_tween.tween_interval(total_time)
+	final_tween.tween_callback(effect.queue_free)
 
 func _update_wall_x_labels() -> void:
 	wall_left_x_label.text = "Wall L X: %.1f" % wall_left.global_position.x
