@@ -2,20 +2,27 @@ extends Node2D
 
 @export var arena_size := 520.0
 @export var wall_thickness := 54.0
+@export var out_of_bounds_min_x := -100.0
+@export var out_of_bounds_max_x := 1200.0
+@export var slowmo_scale := 0.5
+@export var slowmo_duration := 1.0
 
 @onready var ball_left: SwordBall = $BallLeft
 @onready var ball_right: DaggerBall = $BallRight
 @onready var wall_bottom: StaticBody2D = $Walls/WallBottom
+@onready var wall_top: StaticBody2D = $Walls/WallTop
 @onready var wall_left: Wall = $Walls/WallLeft
 @onready var wall_right: Wall = $Walls/WallRight
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
+@onready var game_label: Label = $UI/GameLabel
 @onready var wall_left_x_label: Label = $UI/WallLeftX
 @onready var wall_right_x_label: Label = $UI/WallRightX
 
-var walldist := 200
+var walldist := 300
 
 var _stats_timer := 0.0
+var _game_over := false
 
 func _ready() -> void:
 	call_deferred("_layout_arena")
@@ -23,13 +30,16 @@ func _ready() -> void:
 	_connect_signals()
 	_update_stats(ball_left.ball_id, ball_left.damage_taken, ball_left.damage)
 	_update_stats(ball_right.ball_id, ball_right.damage_taken, ball_right.damage)
+	_setup_game_label()
 
 func _process(delta: float) -> void:
+	if not _game_over:
+		_check_out_of_bounds()
 	_stats_timer += delta
 	if _stats_timer >= 0.1:
 		_stats_timer = 0.0
-		_update_stats(ball_left.ball_id, ball_left.damage_taken, ball_left.damage)
-		_update_stats(ball_right.ball_id, ball_right.damage_taken, ball_right.damage)
+		_update_stats_for_ball(ball_left)
+		_update_stats_for_ball(ball_right)
 
 func _layout_arena() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -40,6 +50,8 @@ func _layout_arena() -> void:
 	var floor_position := Vector2(viewport_size.x * 0.5, center.y + half + wall_thickness * 0.5)
 	var floor_width := viewport_size.x * 3.0
 	_set_wall(wall_bottom, floor_position, Vector2(floor_width, wall_thickness))
+	var ceiling_position := Vector2(viewport_size.x * 0.5, center.y - half - wall_thickness * 0.5)
+	_set_wall(wall_top, ceiling_position, Vector2(floor_width, wall_thickness))
 	var wall_height := arena_size_value + wall_thickness * 2.0
 	_set_wall(wall_left, Vector2(0.0 - wall_thickness * 0.5 + walldist, center.y), Vector2(wall_thickness, wall_height))
 	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5 - walldist, center.y), Vector2(wall_thickness, wall_height))
@@ -52,6 +64,23 @@ func _layout_arena() -> void:
 	ball_left.floor_y = floor_y
 	ball_right.floor_y = floor_y
 	_update_wall_x_labels()
+
+func _check_out_of_bounds() -> void:
+	if is_instance_valid(ball_left) and _is_out_of_bounds(ball_left.global_position.x):
+		_handle_out_of_bounds(ball_left)
+		return
+	if is_instance_valid(ball_right) and _is_out_of_bounds(ball_right.global_position.x):
+		_handle_out_of_bounds(ball_right)
+
+func _is_out_of_bounds(x_value: float) -> bool:
+	return x_value < out_of_bounds_min_x or x_value > out_of_bounds_max_x
+
+func _handle_out_of_bounds(ball) -> void:
+	_game_over = true
+	if is_instance_valid(ball):
+		ball.queue_free()
+	_show_game_label()
+	_trigger_slowmo()
 
 func _setup_balls() -> void:
 	ball_left.ball_id = 1
@@ -110,6 +139,40 @@ func _update_stats(ball_id: int, damage_taken: float, damage: float) -> void:
 		left_stats.text = text
 	else:
 		right_stats.text = text
+
+func _update_stats_for_ball(ball) -> void:
+	if not is_instance_valid(ball):
+		return
+	_update_stats(ball.ball_id, ball.damage_taken, ball.damage)
+
+func _setup_game_label() -> void:
+	game_label.text = "GAME!"
+	game_label.visible = false
+	game_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	game_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	game_label.add_theme_font_size_override("font_size", 64)
+	game_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	game_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	game_label.add_theme_constant_override("outline_size", 6)
+	game_label.anchor_left = 0.0
+	game_label.anchor_top = 0.0
+	game_label.anchor_right = 1.0
+	game_label.anchor_bottom = 1.0
+	game_label.offset_left = 0.0
+	game_label.offset_top = 0.0
+	game_label.offset_right = 0.0
+	game_label.offset_bottom = 0.0
+
+func _show_game_label() -> void:
+	game_label.visible = true
+
+func _trigger_slowmo() -> void:
+	var previous_scale := Engine.time_scale
+	Engine.time_scale = slowmo_scale
+	var timer := get_tree().create_timer(slowmo_duration, true, false, true)
+	timer.timeout.connect(func() -> void:
+		Engine.time_scale = previous_scale
+	)
 
 func _update_wall_x_labels() -> void:
 	wall_left_x_label.text = "Wall L X: %.1f" % wall_left.global_position.x

@@ -40,7 +40,7 @@ func _on_sensor_body_entered(body: Node) -> void:
 	var ball: Ball = body
 	var speed := ball.linear_velocity.length()
 	if ball.is_in_hitstun():
-		var damage := int(ceil(abs(speed / 60.0)))
+		var damage: int = max(int(ceil(abs(speed / 100.0))), 1)
 		if damage > 0:
 			hp -= damage
 			if hp <= 0:
@@ -51,6 +51,7 @@ func _on_sensor_body_entered(body: Node) -> void:
 		else:
 			_flash(bounce_color)
 	else:
+		hp -= 1
 		_flash(bounce_color)
 
 func _flash(color: Color) -> void:
