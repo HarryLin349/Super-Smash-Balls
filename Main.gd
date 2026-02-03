@@ -18,6 +18,7 @@ extends Node2D
 @onready var wall_top: StaticBody2D = $Walls/WallTop
 @onready var wall_left: Wall = $Walls/WallLeft
 @onready var wall_right: Wall = $Walls/WallRight
+@onready var arena_background: ColorRect = $ArenaBackground
 @onready var platform_left: StaticBody2D = $Platforms/PlatformLeft
 @onready var platform_right: StaticBody2D = $Platforms/PlatformRight
 @onready var sfx_ko: AudioStreamPlayer = $SfxKo
@@ -27,6 +28,7 @@ extends Node2D
 var walldist := 58
 
 var _game_over := false
+var _background_time := 0.0
 
 func _ready() -> void:
 	call_deferred("_layout_arena")
@@ -37,6 +39,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not _game_over:
 		_check_out_of_bounds()
+	_update_background_shader(delta)
 
 func _layout_arena() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -52,6 +55,10 @@ func _layout_arena() -> void:
 	var wall_height := arena_size_value + wall_thickness * 2.0
 	_set_wall(wall_left, Vector2(0.0 - wall_thickness * 0.5 + walldist, center.y), Vector2(wall_thickness, wall_height))
 	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5 - walldist, center.y), Vector2(wall_thickness, wall_height))
+
+	if arena_background != null:
+		arena_background.position = center - Vector2(arena_size_value, arena_size_value * 0.5)
+		arena_background.size = Vector2(arena_size_value *2, arena_size_value)
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)
@@ -144,6 +151,14 @@ func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector
 		visual.size = size
 		visual.position = -size * 0.5
 
+func _update_background_shader(delta: float) -> void:
+	if arena_background == null:
+		return
+	var material := arena_background.material
+	if material is ShaderMaterial:
+		_background_time += delta
+		material.set_shader_parameter("time", _background_time)
+
 func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:
 	pass
 
@@ -158,7 +173,7 @@ func _setup_game_label() -> void:
 	game_label.add_theme_font_size_override("font_size", 64)
 	game_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	game_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-	game_label.add_theme_constant_override("outline_size", 8)
+	game_label.add_theme_constant_override("outline_size", 24)
 	game_label.anchor_left = 0.0
 	game_label.anchor_top = 0.0
 	game_label.anchor_right = 1.0
