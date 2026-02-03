@@ -19,7 +19,7 @@ extends Node2D
 @onready var wall_left_x_label: Label = $UI/WallLeftX
 @onready var wall_right_x_label: Label = $UI/WallRightX
 
-var walldist := 300
+var walldist := 50
 
 var _stats_timer := 0.0
 var _game_over := false
