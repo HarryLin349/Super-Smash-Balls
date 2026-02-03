@@ -46,7 +46,7 @@ func _layout_arena() -> void:
 	var center := viewport_size * 0.5 + Vector2(0.0, arena_offset_y)
 
 	var floor_position := Vector2(viewport_size.x * 0.5, center.y + half + wall_thickness * 0.5)
-	var floor_width := viewport_size.x * 3.0
+	var floor_width := viewport_size.x - 120
 	_set_wall(wall_bottom, floor_position, Vector2(floor_width, wall_thickness))
 	var ceiling_position := Vector2(viewport_size.x * 0.5, center.y - half - wall_thickness * 0.5)
 	_set_wall(wall_top, ceiling_position, Vector2(floor_width, wall_thickness))
@@ -127,6 +127,19 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 			visual.color = Color(0, 0, 0, 1)
 		visual.size = size
 		visual.position = -size * 0.5
+	if wall == wall_bottom and wall.has_node("FloorSprite"):
+		var floor_sprite: Sprite2D = wall.get_node("FloorSprite")
+		var tex := floor_sprite.texture
+		if tex != null:
+			var tex_size := tex.get_size()
+			if tex_size.x > 0.0:
+				var scale_value := (arena_size + 130) / tex_size.x
+				floor_sprite.scale = Vector2(scale_value, scale_value)
+		floor_sprite.position = Vector2(0, 50)
+		floor_sprite.z_index = -5
+		if wall.has_node("Visual"):
+			var bottom_visual: ColorRect = wall.get_node("Visual")
+			bottom_visual.color = Color(0, 0, 0, 0)
 	if wall.has_node("Sensor/CollisionShape2D"):
 		var sensor_shape: CollisionShape2D = wall.get_node("Sensor/CollisionShape2D")
 		var sensor_rect := sensor_shape.shape

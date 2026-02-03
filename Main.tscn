@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://0iqtxpu3wuh3"]
+[gd_scene load_steps=17 format=3 uid="uid://0iqtxpu3wuh3"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://cdsoyasi8vk3c" path="res://Ball.tscn" id="2"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://Floor.gd" id="5"]
 [ext_resource type="AudioStream" uid="uid://dtw8o7wi62rte" path="res://sfx/ko-fx.mp3" id="6"]
 [ext_resource type="AudioStream" uid="uid://cjdoqj6khdajt" path="res://sfx/victory.mp3" id="7"]
+[ext_resource type="Texture2D" uid="uid://b4itdgjqj2djm" path="res://assets/floor.png" id="10"]
 
 [sub_resource type="Shader" id="8"]
 code = "shader_type canvas_item;
@@ -71,6 +72,9 @@ shape = SubResource("1")
 
 [node name="Visual" type="ColorRect" parent="Walls/WallBottom"]
 color = Color(0, 0, 0, 1)
+
+[node name="FloorSprite" type="Sprite2D" parent="Walls/WallBottom"]
+texture = ExtResource("10")
 
 [node name="WallTop" type="StaticBody2D" parent="Walls"]
 script = ExtResource("5")
