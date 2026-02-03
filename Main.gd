@@ -3,6 +3,10 @@ extends Node2D
 @export var arena_size := 520.0
 @export var wall_thickness := 60.0
 @export var arena_offset_y := -100.0
+@export var platform_width := 140.0
+@export var platform_height := 20.0
+@export var platform_inset := -45.0
+@export var platform_height_offset := 40.0
 @export var out_of_bounds_min_x := -100.0
 @export var out_of_bounds_max_x := 1000.0
 @export var slowmo_scale := 0.5
@@ -14,6 +18,8 @@ extends Node2D
 @onready var wall_top: StaticBody2D = $Walls/WallTop
 @onready var wall_left: Wall = $Walls/WallLeft
 @onready var wall_right: Wall = $Walls/WallRight
+@onready var platform_left: StaticBody2D = $Platforms/PlatformLeft
+@onready var platform_right: StaticBody2D = $Platforms/PlatformRight
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
 @onready var game_label: Label = $UI/GameLabel
@@ -65,6 +71,12 @@ func _layout_arena() -> void:
 	ball_left.floor_y = floor_y
 	ball_right.floor_y = floor_y
 	_update_wall_x_labels()
+
+	var platform_y := center.y + platform_height_offset
+	var left_x := center.x - arena_size_value * 0.5 + platform_inset + platform_width * 0.5
+	var right_x := center.x + arena_size_value * 0.5 - platform_inset - platform_width * 0.5
+	_set_platform(platform_left, Vector2(left_x, platform_y), Vector2(platform_width, platform_height))
+	_set_platform(platform_right, Vector2(right_x, platform_y), Vector2(platform_width, platform_height))
 
 func _check_out_of_bounds() -> void:
 	if is_instance_valid(ball_left) and _is_out_of_bounds(ball_left.global_position.x):
@@ -123,6 +135,21 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 		if sensor_rect is RectangleShape2D:
 			var rect_sensor: RectangleShape2D = sensor_rect
 			rect_sensor.size = size
+
+func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector2) -> void:
+	var collision_shape: CollisionShape2D = platform.get_node("CollisionShape2D")
+	var shape := collision_shape.shape
+	if shape is RectangleShape2D:
+		var rect_shape: RectangleShape2D = shape
+		rect_shape.size = size
+	collision_shape.one_way_collision = true
+	collision_shape.one_way_collision_margin = 8.0
+	platform.position = position_value
+	if platform.has_node("Visual"):
+		var visual: ColorRect = platform.get_node("Visual")
+		visual.color = Color(0, 0, 0, 1)
+		visual.size = size
+		visual.position = -size * 0.5
 
 func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:
 	var damage_value := ball_left.damage if ball_id == 1 else ball_right.damage

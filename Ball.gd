@@ -188,6 +188,7 @@ func _setup_hp_label() -> void:
 	hp_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	hp_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 	hp_label.add_theme_constant_override("outline_size", 12)
+	hp_label.pivot_offset = hp_label.size * 0.5
 
 func _update_hp_label_transform() -> void:
 	hp_label.rotation = -rotation
