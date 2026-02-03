@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://0iqtxpu3wuh3"]
+[gd_scene load_steps=13 format=3 uid="uid://0iqtxpu3wuh3"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://cdsoyasi8vk3c" path="res://Ball.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://DaggerBall.tscn" id="3"]
 [ext_resource type="Script" path="res://Wall.gd" id="4"]
 [ext_resource type="Script" path="res://Floor.gd" id="5"]
+[ext_resource type="AudioStream" uid="uid://dtw8o7wi62rte" path="res://sfx/ko-fx.mp3" id="6"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(200, 18)
@@ -26,6 +27,10 @@ size = Vector2(140, 10)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1")
+
+[node name="SfxKo" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6")
+volume_db = -3.0
 
 [node name="Walls" type="Node2D" parent="."]
 

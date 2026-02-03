@@ -1,7 +1,7 @@
 extends StaticBody2D
 class_name Wall
 
-@export var max_hp := 100
+@export var max_hp := 10
 @export var flash_time := 0.12
 @export var normal_color := Color(0.1, 0.1, 0.1, 1)
 @export var bounce_color := Color(1, 1, 1, 1)

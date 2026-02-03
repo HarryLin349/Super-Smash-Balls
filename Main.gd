@@ -20,6 +20,7 @@ extends Node2D
 @onready var wall_right: Wall = $Walls/WallRight
 @onready var platform_left: StaticBody2D = $Platforms/PlatformLeft
 @onready var platform_right: StaticBody2D = $Platforms/PlatformRight
+@onready var sfx_ko: AudioStreamPlayer = $SfxKo
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
 @onready var game_label: Label = $UI/GameLabel
@@ -91,7 +92,12 @@ func _is_out_of_bounds(x_value: float) -> bool:
 func _handle_out_of_bounds(ball) -> void:
 	_game_over = true
 	if is_instance_valid(ball):
+		var effect_color: Color = ball.ball_color
+		var ball_pos: Vector2 = ball.global_position
+		if sfx_ko != null:
+			sfx_ko.play()
 		ball.queue_free()
+		_spawn_ko_effect(effect_color, ball_pos)
 	_show_game_label()
 	_trigger_slowmo()
 
@@ -201,6 +207,59 @@ func _trigger_slowmo() -> void:
 	timer.timeout.connect(func() -> void:
 		Engine.time_scale = previous_scale
 	)
+
+func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
+	var host := get_tree().current_scene if get_tree().current_scene != null else self
+	var effect := Node2D.new()
+	effect.z_index = 20
+	host.add_child(effect)
+
+	var viewport_center_x := get_viewport_rect().size.x * 0.5
+	var distance_to_center : int = abs(position_value.x - viewport_center_x)
+	var x := clampf(position_value.x, out_of_bounds_min_x, out_of_bounds_max_x)
+	effect.global_position = Vector2(x, position_value.y)
+
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var spikes := 18
+	var total_length : float = max(210.0, distance_to_center * 0.6)
+	var half := total_length * 0.5
+	var dir := Vector2.RIGHT if position_value.x < viewport_center_x else Vector2.LEFT
+	for i in range(spikes):
+		var t := (float(i) + 0.5) / float(spikes)
+		var y_pos : float = lerp(-half * 0.3, half * 0.3, t)
+		var length := rng.randf_range(total_length * 0.6, total_length * 1.0)
+		var thickness := rng.randf_range(6.0, 12.0)
+		var tri := Polygon2D.new()
+		tri.color = base_color.lerp(Color(1, 1, 1, 1), rng.randf_range(0.3, 0.8))
+		tri.polygon = PackedVector2Array([
+			Vector2(0.0, y_pos - thickness * 0.5),
+			Vector2(0.0, y_pos + thickness * 0.5),
+			dir * length + Vector2(0.0, y_pos)
+		])
+		tri.z_index = 21
+		effect.add_child(tri)
+		var jitter_target := rng.randf_range(total_length * 0.4, total_length * 1.1)
+		var tween := get_tree().create_tween()
+		tween.tween_method(func(value: float) -> void:
+			tri.polygon = PackedVector2Array([
+				Vector2(0.0, y_pos - thickness * 0.5),
+				Vector2(0.0, y_pos + thickness * 0.5),
+				dir * value + Vector2(0.0, y_pos)
+			])
+		, length, jitter_target, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+	var flash := Line2D.new()
+	flash.width = 6.0
+	flash.default_color = Color(1, 1, 1, 1)
+	flash.points = PackedVector2Array([Vector2(0.0, -half * 0.25), dir * total_length + Vector2(0.0, -half * 0.25)])
+	flash.z_index = 22
+	effect.add_child(flash)
+
+	var tween := get_tree().create_tween()
+	tween.tween_property(effect, "scale", Vector2(1.25, 1.25), 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(effect, "modulate:a", 0.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.tween_callback(effect.queue_free)
 
 func _update_wall_x_labels() -> void:
 	wall_left_x_label.text = "Wall L X: %.1f" % wall_left.global_position.x

@@ -47,7 +47,7 @@ var _last_damage_knockback_ms := 0
 var _smoke_texture: Texture2D = null
 var _last_hitstun_bounce_ms := 0
 
-var damage_taken := 0.0
+var damage_taken := 50.0
 
 @onready var hp_label: Label = $HpLabel
 @onready var hitstun_trail_layer: Node2D = $HitstunTrailLayer
