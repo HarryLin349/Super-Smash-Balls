@@ -32,6 +32,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var max_double_jumps := 1
 @export var weight := 1.0
 @export var damage_knockback_cooldown := 0.0 # prev 0.12 to prevent chains
+@export var outline_thickness := 6.0
 
 static var _hit_stop_active := false
 var _flash_timer := 0.0
@@ -105,6 +106,8 @@ func _draw() -> void:
 		draw_color = Color(1, 1, 1)
 	elif _in_hitstun:
 		draw_color = ball_color.lerp(Color(1, 1, 1), hitstun_tint_strength)
+	if outline_thickness > 0.0:
+		draw_circle(Vector2.ZERO, radius + outline_thickness, Color(0, 0, 0, 1))
 	draw_circle(Vector2.ZERO, radius, draw_color)
 
 func take_damage(amount: float, source: Ball = null, knockback_impulse: float = -1.0) -> void:

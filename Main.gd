@@ -28,7 +28,6 @@ extends Node2D
 var walldist := 58
 
 var _game_over := false
-var _background_time := 0.0
 
 func _ready() -> void:
 	call_deferred("_layout_arena")
@@ -39,7 +38,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not _game_over:
 		_check_out_of_bounds()
-	_update_background_shader(delta)
 
 func _layout_arena() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -151,13 +149,6 @@ func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector
 		visual.size = size
 		visual.position = -size * 0.5
 
-func _update_background_shader(delta: float) -> void:
-	if arena_background == null:
-		return
-	var material := arena_background.material
-	if material is ShaderMaterial:
-		_background_time += delta
-		material.set_shader_parameter("time", _background_time)
 
 func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:
 	pass
