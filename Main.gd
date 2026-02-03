@@ -1,7 +1,8 @@
 extends Node2D
 
 @export var arena_size := 520.0
-@export var wall_thickness := 58.0
+@export var wall_thickness := 60.0
+@export var arena_offset_y := -100.0
 @export var out_of_bounds_min_x := -100.0
 @export var out_of_bounds_max_x := 1000.0
 @export var slowmo_scale := 0.5
@@ -19,7 +20,7 @@ extends Node2D
 @onready var wall_left_x_label: Label = $UI/WallLeftX
 @onready var wall_right_x_label: Label = $UI/WallRightX
 
-var walldist := 60
+var walldist := 58
 
 var _stats_timer := 0.0
 var _game_over := false
@@ -45,7 +46,7 @@ func _layout_arena() -> void:
 	var viewport_size := get_viewport_rect().size
 	var arena_size_value: float = arena_size
 	var half: float = arena_size_value * 0.5
-	var center := viewport_size * 0.5
+	var center := viewport_size * 0.5 + Vector2(0.0, arena_offset_y)
 
 	var floor_position := Vector2(viewport_size.x * 0.5, center.y + half + wall_thickness * 0.5)
 	var floor_width := viewport_size.x * 3.0
