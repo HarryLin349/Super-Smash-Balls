@@ -130,34 +130,3 @@ offset_bottom = 200.0
 text = "GAME!"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="LeftStats" type="Label" parent="UI"]
-offset_left = 24.0
-offset_top = 980.0
-offset_right = 520.0
-offset_bottom = 1050.0
-text = "Damage Taken: 0
-Damage: 1"
-
-[node name="RightStats" type="Label" parent="UI"]
-offset_left = 24.0
-offset_top = 1056.0
-offset_right = 520.0
-offset_bottom = 1126.0
-text = "Damage Taken: 0
-Damage: 1"
-
-[node name="WallLeftX" type="Label" parent="UI"]
-offset_left = 24.0
-offset_top = 24.0
-offset_right = 260.0
-offset_bottom = 48.0
-text = "Wall L X: 0.0"
-
-[node name="WallRightX" type="Label" parent="UI"]
-offset_left = 520.0
-offset_top = 24.0
-offset_right = 760.0
-offset_bottom = 48.0
-text = "Wall R X: 0.0"
-horizontal_alignment = 2

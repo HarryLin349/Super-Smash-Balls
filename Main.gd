@@ -22,33 +22,21 @@ extends Node2D
 @onready var platform_right: StaticBody2D = $Platforms/PlatformRight
 @onready var sfx_ko: AudioStreamPlayer = $SfxKo
 @onready var sfx_victory: AudioStreamPlayer = $SfxVictory
-@onready var left_stats: Label = $UI/LeftStats
-@onready var right_stats: Label = $UI/RightStats
 @onready var game_label: Label = $UI/GameLabel
-@onready var wall_left_x_label: Label = $UI/WallLeftX
-@onready var wall_right_x_label: Label = $UI/WallRightX
 
 var walldist := 58
 
-var _stats_timer := 0.0
 var _game_over := false
 
 func _ready() -> void:
 	call_deferred("_layout_arena")
 	_setup_balls()
 	_connect_signals()
-	_update_stats(ball_left.ball_id, ball_left.damage_taken, ball_left.damage)
-	_update_stats(ball_right.ball_id, ball_right.damage_taken, ball_right.damage)
 	_setup_game_label()
 
 func _process(delta: float) -> void:
 	if not _game_over:
 		_check_out_of_bounds()
-	_stats_timer += delta
-	if _stats_timer >= 0.1:
-		_stats_timer = 0.0
-		_update_stats_for_ball(ball_left)
-		_update_stats_for_ball(ball_right)
 
 func _layout_arena() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -72,7 +60,6 @@ func _layout_arena() -> void:
 	ball_right.stage_center = center
 	ball_left.floor_y = floor_y
 	ball_right.floor_y = floor_y
-	_update_wall_x_labels()
 
 	var platform_y := center.y + platform_height_offset
 	var left_x := center.x - arena_size_value * 0.5 + platform_inset + platform_width * 0.5
@@ -112,10 +99,7 @@ func _setup_balls() -> void:
 	ball_right.set_spin_direction(-1.0)
 
 func _connect_signals() -> void:
-	ball_left.damage_taken_changed.connect(_on_damage_taken_changed)
-	ball_left.damage_changed.connect(_on_damage_changed)
-	ball_right.damage_taken_changed.connect(_on_damage_taken_changed)
-	ball_right.damage_changed.connect(_on_damage_changed)
+	pass
 
 func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> void:
 	var collision_shape: CollisionShape2D = wall.get_node("CollisionShape2D")
@@ -161,26 +145,10 @@ func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector
 		visual.position = -size * 0.5
 
 func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:
-	var damage_value := ball_left.damage if ball_id == 1 else ball_right.damage
-	_update_stats(ball_id, damage_taken, damage_value)
+	pass
 
 func _on_damage_changed(ball_id: int, damage: float) -> void:
-	var damage_taken_value := ball_left.damage_taken if ball_id == 1 else ball_right.damage_taken
-	_update_stats(ball_id, damage_taken_value, damage)
-
-func _update_stats(ball_id: int, damage_taken: float, damage: float) -> void:
-	var rotation_value := ball_left.get_spin_speed() if ball_id == 1 else ball_right.get_spin_speed()
-	var speed_value := ball_left.linear_velocity.length() if ball_id == 1 else ball_right.linear_velocity.length()
-	var text := "Damage Taken: %.1f\nDamage: %.1f\nSpin: %.2f\nSpeed: %.1f" % [damage_taken, damage, rotation_value, speed_value]
-	if ball_id == 1:
-		left_stats.text = text
-	else:
-		right_stats.text = text
-
-func _update_stats_for_ball(ball) -> void:
-	if not is_instance_valid(ball):
-		return
-	_update_stats(ball.ball_id, ball.damage_taken, ball.damage)
+	pass
 
 func _setup_game_label() -> void:
 	game_label.text = "GAME!"
@@ -260,7 +228,3 @@ func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
 	var total_time := stage_duration * float(stages.size())
 	final_tween.tween_interval(total_time)
 	final_tween.tween_callback(effect.queue_free)
-
-func _update_wall_x_labels() -> void:
-	wall_left_x_label.text = "Wall L X: %.1f" % wall_left.global_position.x
-	wall_right_x_label.text = "Wall R X: %.1f" % wall_right.global_position.x
