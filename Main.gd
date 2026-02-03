@@ -21,6 +21,7 @@ extends Node2D
 @onready var platform_left: StaticBody2D = $Platforms/PlatformLeft
 @onready var platform_right: StaticBody2D = $Platforms/PlatformRight
 @onready var sfx_ko: AudioStreamPlayer = $SfxKo
+@onready var sfx_victory: AudioStreamPlayer = $SfxVictory
 @onready var left_stats: Label = $UI/LeftStats
 @onready var right_stats: Label = $UI/RightStats
 @onready var game_label: Label = $UI/GameLabel
@@ -98,6 +99,8 @@ func _handle_out_of_bounds(ball) -> void:
 			sfx_ko.play()
 		ball.queue_free()
 		_spawn_ko_effect(effect_color, ball_pos)
+		if sfx_victory != null:
+			sfx_victory.play()
 	_show_game_label()
 	_trigger_slowmo()
 
@@ -207,6 +210,7 @@ func _trigger_slowmo() -> void:
 	timer.timeout.connect(func() -> void:
 		Engine.time_scale = previous_scale
 	)
+
 
 func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
 	var host := get_tree().current_scene if get_tree().current_scene != null else self
