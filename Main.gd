@@ -153,7 +153,7 @@ func _setup_game_label() -> void:
 	game_label.add_theme_font_size_override("font_size", 64)
 	game_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 	game_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-	game_label.add_theme_constant_override("outline_size", 6)
+	game_label.add_theme_constant_override("outline_size", 8)
 	game_label.anchor_left = 0.0
 	game_label.anchor_top = 0.0
 	game_label.anchor_right = 1.0

@@ -31,6 +31,8 @@ func _ready() -> void:
 		hp_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		hp_label.add_theme_font_size_override("font_size", 28)
 		hp_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+		hp_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		hp_label.add_theme_constant_override("outline_size", 4)
 		hp_label.z_index = 10
 		hp_label.z_as_relative = false
 

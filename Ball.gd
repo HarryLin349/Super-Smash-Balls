@@ -70,6 +70,7 @@ func _ready() -> void:
 	queue_redraw()
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
+	_setup_hp_label()
 
 func _physics_process(delta: float) -> void:
 	_apex_cooldown = max(_apex_cooldown - delta, 0.0)
@@ -175,7 +176,13 @@ func _set_hitstun(active: bool) -> void:
 	queue_redraw()
 
 func _update_hp_label() -> void:
-	hp_label.text = "%.1f" % damage_taken
+	hp_label.text = str(int(round(damage_taken)))
+
+func _setup_hp_label() -> void:
+	hp_label.add_theme_font_size_override("font_size", 32)
+	hp_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	hp_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	hp_label.add_theme_constant_override("outline_size", 12)
 
 func _spawn_hitstun_particle() -> void:
 	var particle := Sprite2D.new()
