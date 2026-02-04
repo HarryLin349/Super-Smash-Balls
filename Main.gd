@@ -158,9 +158,22 @@ func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector
 	platform.position = position_value
 	if platform.has_node("Visual"):
 		var visual: ColorRect = platform.get_node("Visual")
-		visual.color = Color(0, 0, 0, 1)
+		visual.color = Color(0, 0, 0, 0)
 		visual.size = size
 		visual.position = -size * 0.5
+	if platform.has_node("PlatformSprite"):
+		var platform_sprite: Sprite2D = platform.get_node("PlatformSprite")
+		var floor_scale := 1.0
+		if wall_bottom != null and wall_bottom.has_node("FloorSprite"):
+			var floor_sprite: Sprite2D = wall_bottom.get_node("FloorSprite")
+			var floor_tex := floor_sprite.texture
+			if floor_tex != null:
+				var floor_tex_size := floor_tex.get_size()
+				if floor_tex_size.x > 0.0:
+					floor_scale = (arena_size + 130) / floor_tex_size.x
+		var x_scale := -floor_scale if platform == platform_right else floor_scale
+		platform_sprite.scale = Vector2(x_scale, floor_scale)
+		platform_sprite.position = Vector2.ZERO
 
 
 func _on_damage_taken_changed(ball_id: int, damage_taken: float) -> void:

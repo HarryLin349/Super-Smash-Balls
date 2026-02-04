@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://0iqtxpu3wuh3"]
+[gd_scene load_steps=18 format=3 uid="uid://0iqtxpu3wuh3"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://cdsoyasi8vk3c" path="res://Ball.tscn" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://dtw8o7wi62rte" path="res://sfx/ko-fx.mp3" id="6"]
 [ext_resource type="AudioStream" uid="uid://cjdoqj6khdajt" path="res://sfx/victory.mp3" id="7"]
 [ext_resource type="Texture2D" uid="uid://b4itdgjqj2djm" path="res://assets/floor.png" id="10"]
+[ext_resource type="Texture2D" uid="uid://cwa26wt6svnko" path="res://assets/platform.png" id="11"]
 
 [sub_resource type="Shader" id="8"]
 code = "shader_type canvas_item;
@@ -140,12 +141,18 @@ shape = SubResource("7")
 
 [node name="Visual" type="ColorRect" parent="Platforms/PlatformLeft"]
 
+[node name="PlatformSprite" type="Sprite2D" parent="Platforms/PlatformLeft"]
+texture = ExtResource("11")
+
 [node name="PlatformRight" type="StaticBody2D" parent="Platforms"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platforms/PlatformRight"]
 shape = SubResource("7")
 
 [node name="Visual" type="ColorRect" parent="Platforms/PlatformRight"]
+
+[node name="PlatformSprite" type="Sprite2D" parent="Platforms/PlatformRight"]
+texture = ExtResource("11")
 
 [node name="BallLeft" parent="." instance=ExtResource("2")]
 
