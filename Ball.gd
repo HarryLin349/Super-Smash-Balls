@@ -33,6 +33,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var weight := 1.0
 @export var damage_knockback_cooldown := 0.0 # prev 0.12 to prevent chains
 @export var outline_thickness := 6.0
+@export var edge_double_jump_margin := 60.0
 
 static var _hit_stop_active := false
 var _flash_timer := 0.0
@@ -91,6 +92,7 @@ func _physics_process(delta: float) -> void:
 		if _trail_timer <= 0.0:
 			_spawn_hitstun_particle()
 			_trail_timer = hitstun_trail_interval
+	_check_edge_double_jump()
 	_check_apex_double_jump()
 	_check_random_jump(delta)
 	_apply_attraction_force()
@@ -286,6 +288,27 @@ func _check_apex_double_jump() -> void:
 			_spawn_double_jump_ring()
 			_apex_cooldown = 0.3
 			_double_jumps_used += 1
+
+func _check_edge_double_jump() -> void:
+	if _double_jumps_used >= max_double_jumps:
+		return
+	if _is_on_floor():
+		return
+	var viewport_width := get_viewport_rect().size.x
+	if viewport_width <= 0.0:
+		return
+	if global_position.x >= edge_double_jump_margin and global_position.x <= viewport_width - edge_double_jump_margin:
+		return
+	var horizontal_dir := stage_center.x - global_position.x
+	var x_dir := 0.0
+	if abs(horizontal_dir) > 0.01:
+		x_dir = signf(horizontal_dir)
+	else:
+		x_dir = 1.0 if global_position.x < viewport_width * 0.5 else -1.0
+	apply_impulse(Vector2(x_dir * apex_horizontal_impulse, -apex_jump_impulse))
+	_spawn_double_jump_ring()
+	_apex_cooldown = maxf(_apex_cooldown, 0.3)
+	_double_jumps_used += 1
 
 func _check_random_jump(delta: float) -> void:
 	if _jump_cooldown > 0.0:

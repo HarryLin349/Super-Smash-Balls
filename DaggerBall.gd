@@ -12,7 +12,7 @@ func _ready() -> void:
 	damage_knockback_impulse *= dagger_damage_impulse_multiplier
 	damage_increment = 0.0
 	max_double_jumps = 2
-	weight = 0.8
+	weight = 1.0
 	random_jump_chance_per_second *= 1.6
 	apex_double_jump_chance *= 1.8
 	attraction_force *= 1.2
