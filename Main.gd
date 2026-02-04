@@ -55,8 +55,8 @@ func _layout_arena() -> void:
 	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5 - walldist, center.y), Vector2(wall_thickness, wall_height))
 
 	if arena_background != null:
-		arena_background.position = center - Vector2(arena_size_value, arena_size_value * 0.5)
-		arena_background.size = Vector2(arena_size_value *2, arena_size_value)
+		arena_background.position = Vector2.ZERO
+		arena_background.size = viewport_size
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)

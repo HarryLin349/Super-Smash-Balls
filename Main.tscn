@@ -12,22 +12,24 @@
 [sub_resource type="Shader" id="8"]
 code = "shader_type canvas_item;
 
-uniform vec4 top_color : source_color = vec4(0.18, 0.18, 0.18, 1.0);
-uniform vec4 bottom_color : source_color = vec4(0.28, 0.28, 0.28, 1.0);
-uniform float time = 0.0;
+uniform vec4 top_color : source_color = vec4(0.0667, 0.2353, 0.3098, 1.0);
+uniform vec4 mid_color : source_color = vec4(0.6, 0.7608, 0.6667, 1.0);
+uniform vec4 bottom_color : source_color = vec4(0.8706, 0.8667, 0.6353, 1.0);
 
 void fragment() {
-	float shift = sin(time * 0.35) * 0.03;
+	float shift = sin(TIME * 0.35) * 0.03;
 	float t = clamp(UV.y + shift, 0.0, 1.0);
-	COLOR = mix(top_color, bottom_color, t);
+	vec4 top_mid = mix(top_color, mid_color, smoothstep(0.0, 0.5, t));
+	vec4 mid_bot = mix(mid_color, bottom_color, smoothstep(0.5, 1.0, t));
+	COLOR = mix(top_mid, mid_bot, step(0.5, t));
 }
 "
 
 [sub_resource type="ShaderMaterial" id="9"]
 shader = SubResource("8")
-shader_parameter/top_color = Color(0.18, 0.18, 0.18, 1)
-shader_parameter/bottom_color = Color(0.28, 0.28, 0.28, 1)
-shader_parameter/time = 0.0
+shader_parameter/top_color = Color(0.0666667, 0.235294, 0.309804, 1)
+shader_parameter/mid_color = Color(0.6, 0.760784, 0.666667, 1)
+shader_parameter/bottom_color = Color(0.870588, 0.866667, 0.635294, 1)
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(200, 18)
