@@ -3,7 +3,7 @@ class_name RapierBall
 
 @export var base_damage := 1.0
 @export var tipper_damage := 1.0
-@export var tipper_damage_increment := 2.0
+@export var tipper_damage_increment := 1.0
 @export var tipper_lockout_time := 0.5
 @export var tipper_increment_cooldown := 0.1
 @export var rapier_knockback := 320.0

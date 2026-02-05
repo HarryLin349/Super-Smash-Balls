@@ -30,6 +30,8 @@ var sprite_scale := 1.0
 @onready var player1_label: Label = $UI/Player1Label
 @onready var player2_label: Label = $UI/Player2Label
 @onready var vs_sprite: Sprite2D = $UI/VsSprite
+@onready var player1_icon: PlayerIcon = $UI/Player1Icon
+@onready var player2_icon: PlayerIcon = $UI/Player2Icon
 
 var walldist := 58
 
@@ -46,6 +48,7 @@ func _ready() -> void:
 	_connect_signals()
 	_setup_game_label()
 	_setup_player_labels()
+	_setup_player_icons()
 
 func _process(delta: float) -> void:
 	if not _game_over:
@@ -72,6 +75,8 @@ func _layout_arena() -> void:
 
 	var ceiling_top_y := ceiling_position.y - wall_thickness * 0.5
 	_layout_player_labels(ceiling_top_y, viewport_size.x)
+	var below_floor_y := floor_position.y + wall_thickness * 0.5 + 10.0
+	_layout_player_icons(below_floor_y, viewport_size.x)
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)
@@ -261,6 +266,15 @@ func _setup_player_labels() -> void:
 		player2_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 		player2_label.add_theme_constant_override("outline_size", 32)
 
+func _setup_player_icons() -> void:
+	if player1_icon != null:
+		player1_icon.weapon_rotation_deg = 20.0
+		player1_icon.setup(player1, Color(0.9, 0.2, 0.2))
+	if player2_icon != null:
+		player2_icon.weapon_rotation_deg = -55.0
+		player2_icon.weapon_offset_px = Vector2(-20.0, 0.0)
+		player2_icon.setup(player2, Color(0.2, 0.4, 0.9))
+
 func _update_player_labels() -> void:
 	if player1_label != null:
 		player1_label.text = player1.ball_name.to_upper() if player1 != null else "PLAYER 1"
@@ -309,6 +323,14 @@ func _layout_player_labels(ceiling_top_y: float, viewport_width: float) -> void:
 		vs_sprite.z_index = 5
 		vs_sprite.visible = true
 		vs_sprite.modulate = Color(1, 1, 1, 1)
+
+func _layout_player_icons(top_y: float, viewport_width: float) -> void:
+	var icon_size := player1_icon.icon_size if player1_icon != null else Vector2(90.0, 90.0)
+	var y_center := top_y + icon_size.y * 0.5
+	if player1_icon != null:
+		player1_icon.position = Vector2(viewport_width * 0.25, y_center)
+	if player2_icon != null:
+		player2_icon.position = Vector2(viewport_width * 0.75, y_center)
 
 func _show_game_label() -> void:
 	game_label.visible = true
