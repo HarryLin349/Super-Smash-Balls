@@ -6,7 +6,7 @@ extends Node2D
 @export var platform_width := 140.0
 @export var platform_height := 20.0
 @export var platform_inset := -45.0
-@export var platform_height_offset := 40.0
+@export var platform_height_offset := 60.0
 @export var out_of_bounds_min_x := -100.0
 @export var out_of_bounds_max_x := 1000.0
 @export var slowmo_scale := 0.5
@@ -47,10 +47,10 @@ func _layout_arena() -> void:
 
 	var floor_position := Vector2(viewport_size.x * 0.5, center.y + half + wall_thickness * 0.5)
 	var floor_width := viewport_size.x - 120
-	_set_wall(wall_bottom, floor_position, Vector2(floor_width, wall_thickness))
+	_set_wall(wall_bottom, floor_position, Vector2(floor_width + 10, wall_thickness))
 	var ceiling_position := Vector2(viewport_size.x * 0.5, center.y - half - wall_thickness * 0.5)
-	_set_wall(wall_top, ceiling_position, Vector2(floor_width, wall_thickness))
-	var wall_height := arena_size_value + wall_thickness * 2.0
+	_set_wall(wall_top, ceiling_position, Vector2(viewport_size.x, wall_thickness))
+	var wall_height := arena_size_value
 	_set_wall(wall_left, Vector2(0.0 - wall_thickness * 0.5 + walldist, center.y), Vector2(wall_thickness, wall_height))
 	_set_wall(wall_right, Vector2(viewport_size.x + wall_thickness * 0.5 - walldist, center.y), Vector2(wall_thickness, wall_height))
 
@@ -125,6 +125,7 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 			visual.color = wall.normal_color
 		else:
 			visual.color = Color(0, 0, 0, 1)
+		visual.z_index = -6
 		visual.size = size
 		visual.position = -size * 0.5
 	if wall == wall_bottom and wall.has_node("FloorSprite"):
