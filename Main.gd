@@ -73,16 +73,28 @@ func _layout_arena() -> void:
 	_set_platform(platform_right, Vector2(right_x, platform_y), Vector2(platform_width, platform_height))
 
 func _check_out_of_bounds() -> void:
-	if is_instance_valid(ball_left) and _is_out_of_bounds(ball_left.global_position.x):
-		_handle_out_of_bounds(ball_left)
-		return
-	if is_instance_valid(ball_right) and _is_out_of_bounds(ball_right.global_position.x):
-		_handle_out_of_bounds(ball_right)
+	if is_instance_valid(ball_left):
+		if _is_out_of_bounds(ball_left.global_position.x):
+			_handle_out_of_bounds(ball_left, false)
+			return
+		if _is_below_screen(ball_left):
+			_handle_out_of_bounds(ball_left, true)
+			return
+	if is_instance_valid(ball_right):
+		if _is_out_of_bounds(ball_right.global_position.x):
+			_handle_out_of_bounds(ball_right, false)
+			return
+		if _is_below_screen(ball_right):
+			_handle_out_of_bounds(ball_right, true)
 
 func _is_out_of_bounds(x_value: float) -> bool:
 	return x_value < out_of_bounds_min_x or x_value > out_of_bounds_max_x
 
-func _handle_out_of_bounds(ball) -> void:
+func _is_below_screen(ball: Ball) -> bool:
+	var viewport_height := get_viewport_rect().size.y
+	return ball.global_position.y - ball.radius > viewport_height
+
+func _handle_out_of_bounds(ball, fell_below: bool) -> void:
 	_game_over = true
 	if is_instance_valid(ball):
 		var effect_color: Color = ball.ball_color
@@ -90,7 +102,13 @@ func _handle_out_of_bounds(ball) -> void:
 		if sfx_ko != null:
 			sfx_ko.play()
 		ball.queue_free()
-		_spawn_ko_effect(effect_color, ball_pos)
+		var effect_pos := ball_pos
+		var direction := Vector2.RIGHT
+		if fell_below:
+			var viewport_size := get_viewport_rect().size
+			effect_pos = Vector2(ball_pos.x, viewport_size.y)
+			direction = Vector2.UP
+		_spawn_ko_effect(effect_color, effect_pos, direction)
 		if sfx_victory != null:
 			sfx_victory.play()
 	_show_game_label()
@@ -213,7 +231,7 @@ func _trigger_slowmo() -> void:
 	)
 
 
-func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
+func _spawn_ko_effect(base_color: Color, position_value: Vector2, direction: Vector2) -> void:
 	var host := get_tree().current_scene if get_tree().current_scene != null else self
 	var effect := Node2D.new()
 	effect.z_index = 20
@@ -229,32 +247,49 @@ func _spawn_ko_effect(base_color: Color, position_value: Vector2) -> void:
 	var spikes := 18
 	var total_length : float = max(315.0, distance_to_center * 0.9)
 	var half := total_length * 0.5
-	var dir := Vector2.RIGHT if position_value.x < viewport_center_x else Vector2.LEFT
+	var dir := direction
+	if dir == Vector2.ZERO:
+		dir = Vector2.RIGHT if position_value.x < viewport_center_x else Vector2.LEFT
 	var stages := PackedFloat32Array([1.0, 0.7, 0.95, 0.4, 0.8, 0.6, 0.6, 0.0])
 	var stage_duration := 0.08
 	for i in range(spikes):
 		var t := (float(i) + 0.5) / float(spikes)
 		var y_pos : float = lerp(-half * 0.3, half * 0.3, t)
+		var x_pos : float = lerp(-half * 0.3, half * 0.3, t)
 		var length := rng.randf_range(total_length * 0.8, total_length * 1.0)
 		var thickness := rng.randf_range(10.0, 18.0)
 		var tri := Polygon2D.new()
 		tri.color = base_color.lerp(Color(1, 1, 1, 1), rng.randf_range(0.3, 0.8))
-		tri.polygon = PackedVector2Array([
-			Vector2(0.0, y_pos - thickness * 0.5),
-			Vector2(0.0, y_pos + thickness * 0.5),
-			dir * length + Vector2(0.0, y_pos)
-		])
+		if abs(dir.y) > 0.0:
+			tri.polygon = PackedVector2Array([
+				Vector2(x_pos - thickness * 0.5, 0.0),
+				Vector2(x_pos + thickness * 0.5, 0.0),
+				dir * length + Vector2(x_pos, 0.0)
+			])
+		else:
+			tri.polygon = PackedVector2Array([
+				Vector2(0.0, y_pos - thickness * 0.5),
+				Vector2(0.0, y_pos + thickness * 0.5),
+				dir * length + Vector2(0.0, y_pos)
+			])
 		tri.z_index = 21
 		effect.add_child(tri)
 		var tween := get_tree().create_tween()
 		for stage in stages:
 			var target := length * stage
 			tween.tween_method(func(value: float) -> void:
-				tri.polygon = PackedVector2Array([
-					Vector2(0.0, y_pos - thickness * 0.5),
-					Vector2(0.0, y_pos + thickness * 0.5),
-					dir * value + Vector2(0.0, y_pos)
-				])
+				if abs(dir.y) > 0.0:
+					tri.polygon = PackedVector2Array([
+						Vector2(x_pos - thickness * 0.5, 0.0),
+						Vector2(x_pos + thickness * 0.5, 0.0),
+						dir * value + Vector2(x_pos, 0.0)
+					])
+				else:
+					tri.polygon = PackedVector2Array([
+						Vector2(0.0, y_pos - thickness * 0.5),
+						Vector2(0.0, y_pos + thickness * 0.5),
+						dir * value + Vector2(0.0, y_pos)
+					])
 			, length, target, stage_duration).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	var final_tween := get_tree().create_tween()

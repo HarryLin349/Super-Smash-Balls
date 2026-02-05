@@ -12,6 +12,7 @@ class_name Wall
 @onready var hp_label: Label = $Visual/HpLabel
 
 var hp := 0
+var _hp_tick := 0.0
 
 func _ready() -> void:
 	hp = max_hp
@@ -35,6 +36,18 @@ func _ready() -> void:
 		hp_label.add_theme_constant_override("outline_size", 12)
 		hp_label.z_index = 10
 		hp_label.z_as_relative = false
+
+func _process(delta: float) -> void:
+	if hp <= 0:
+		return
+	_hp_tick += delta
+	while _hp_tick >= 1.0:
+		_hp_tick -= 1.0
+		hp -= 1
+		if hp <= 0:
+			_disable_wall()
+			return
+		_update_hp_label()
 
 func _on_sensor_body_entered(body: Node) -> void:
 	if not (body is Ball):
