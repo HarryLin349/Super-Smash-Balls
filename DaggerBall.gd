@@ -8,6 +8,7 @@ class_name DaggerBall
 
 func _ready() -> void:
 	super._ready()
+	ball_name = "DAGGER"
 	weapon_rotation_speed *= dagger_rotation_multiplier
 	damage_knockback_impulse *= dagger_damage_impulse_multiplier
 	damage_increment = 0.0

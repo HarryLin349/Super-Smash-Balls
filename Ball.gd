@@ -4,6 +4,7 @@ class_name Ball
 signal damage_taken_changed(ball_id: int, damage_taken: float)
 
 @export var ball_id := 1
+@export var ball_name := "BALL"
 @export var ball_color := Color(0.9, 0.2, 0.2)
 @export var radius := 40.0
 @export var hit_pause_time := 0.2

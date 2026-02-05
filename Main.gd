@@ -7,6 +7,7 @@ extends Node2D
 @export var platform_height := 20.0
 @export var platform_inset := -45.0
 @export var platform_height_offset := 60.0
+var sprite_scale := 1.0
 @export var out_of_bounds_min_x := -100.0
 @export var out_of_bounds_max_x := 1000.0
 @export var slowmo_scale := 0.5
@@ -24,16 +25,22 @@ extends Node2D
 @onready var sfx_ko: AudioStreamPlayer = $SfxKo
 @onready var sfx_victory: AudioStreamPlayer = $SfxVictory
 @onready var game_label: Label = $UI/GameLabel
+@onready var player1_label: Label = $UI/Player1Label
+@onready var player2_label: Label = $UI/Player2Label
+@onready var vs_sprite: Sprite2D = $UI/VsSprite
 
 var walldist := 58
 
 var _game_over := false
+var player1: Ball = null
+var player2: Ball = null
 
 func _ready() -> void:
 	call_deferred("_layout_arena")
 	_setup_balls()
 	_connect_signals()
 	_setup_game_label()
+	_setup_player_labels()
 
 func _process(delta: float) -> void:
 	if not _game_over:
@@ -57,6 +64,9 @@ func _layout_arena() -> void:
 	if arena_background != null:
 		arena_background.position = Vector2.ZERO
 		arena_background.size = viewport_size
+
+	var ceiling_top_y := ceiling_position.y - wall_thickness * 0.5
+	_layout_player_labels(ceiling_top_y, viewport_size.x)
 
 	var floor_y := floor_position.y - wall_thickness * 0.5
 	ball_left.position = Vector2(center.x - arena_size_value * 0.2, floor_y - ball_left.radius)
@@ -120,6 +130,8 @@ func _setup_balls() -> void:
 	ball_right.ball_id = 2
 	ball_right.ball_color = Color(0.2, 0.8, 0.2)
 	ball_right.set_spin_direction(-1.0)
+	player1 = ball_left
+	player2 = ball_right
 
 func _connect_signals() -> void:
 	pass
@@ -154,6 +166,7 @@ func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> vo
 			if tex_size.x > 0.0:
 				var scale_value := (arena_size + 130) / tex_size.x
 				floor_sprite.scale = Vector2(scale_value, scale_value)
+				sprite_scale = scale_value
 		floor_sprite.position = Vector2(0, 50)
 		floor_sprite.z_index = -5
 		if wall.has_node("Visual"):
@@ -190,8 +203,9 @@ func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector
 				var floor_tex_size := floor_tex.get_size()
 				if floor_tex_size.x > 0.0:
 					floor_scale = (arena_size + 130) / floor_tex_size.x
-		var x_scale := -floor_scale if platform == platform_right else floor_scale
-		platform_sprite.scale = Vector2(x_scale, floor_scale)
+		var scaled := floor_scale * sprite_scale
+		var x_scale := -scaled if platform == platform_right else scaled
+		platform_sprite.scale = Vector2(x_scale, scaled)
 		platform_sprite.position = Vector2.ZERO
 
 
@@ -218,6 +232,70 @@ func _setup_game_label() -> void:
 	game_label.offset_top = 0.0
 	game_label.offset_right = 0.0
 	game_label.offset_bottom = 0.0
+
+func _setup_player_labels() -> void:
+	_update_player_labels()
+	if player1_label != null:
+		player1_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		player1_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		player1_label.add_theme_font_size_override("font_size", 60)
+		player1_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		player1_label.add_theme_constant_override("outline_size", 32)
+	if player2_label != null:
+		player2_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		player2_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		player2_label.add_theme_font_size_override("font_size", 60)
+		player2_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		player2_label.add_theme_constant_override("outline_size", 32)
+
+func _update_player_labels() -> void:
+	if player1_label != null:
+		player1_label.text = player1.ball_name.to_upper() if player1 != null else "PLAYER 1"
+	if player2_label != null:
+		player2_label.text = player2.ball_name.to_upper() if player2 != null else "PLAYER 2"
+
+func _layout_player_labels(ceiling_top_y: float, viewport_width: float) -> void:
+	_update_player_labels()
+	var band_height : float = max(0.0, ceiling_top_y)
+	var top_offset : float = 10.0
+	if band_height > 0.0 and player1_label != null:
+		top_offset = (band_height - player1_label.get_minimum_size().y) * 0.5
+	if player1_label != null:
+		player1_label.anchor_left = 0.0
+		player1_label.anchor_right = 0.0
+		player1_label.anchor_top = 0.0
+		player1_label.anchor_bottom = 0.0
+		player1_label.offset_left = 20.0
+		player1_label.offset_top = top_offset
+	if player2_label != null:
+		player2_label.anchor_left = 0.0
+		player2_label.anchor_right = 0.0
+		player2_label.anchor_top = 0.0
+		player2_label.anchor_bottom = 0.0
+		player2_label.offset_left = viewport_width - 20.0 - player2_label.get_minimum_size().x
+		if band_height > 0.0:
+			player2_label.offset_top = (band_height - player2_label.get_minimum_size().y) * 0.5
+		else:
+			player2_label.offset_top = 10.0
+	if vs_sprite != null:
+		var vs_tex := vs_sprite.texture
+		var vs_size := Vector2.ZERO
+		if vs_tex != null:
+			var base_size := vs_tex.get_size()
+			var scaled := sprite_scale
+			if base_size.y > 0.0:
+				var fit_scale : float = 1.0
+				if band_height > 0.0:
+					fit_scale = min(1.0, band_height / base_size.y)
+				scaled *= fit_scale
+			vs_sprite.scale = Vector2(scaled, scaled)
+			vs_size = base_size * scaled
+		var vs_y := (band_height - vs_size.y) * 0.5 if band_height > 0.0 else 10.0
+		vs_sprite.position = Vector2(viewport_width * 0.5, vs_y + vs_size.y * 0.5)
+		vs_sprite.z_as_relative = false
+		vs_sprite.z_index = 5
+		vs_sprite.visible = true
+		vs_sprite.modulate = Color(1, 1, 1, 1)
 
 func _show_game_label() -> void:
 	game_label.visible = true
