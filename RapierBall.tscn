@@ -11,10 +11,10 @@
 radius = 26.0
 
 [sub_resource type="RectangleShape2D" id="2"]
-size = Vector2(71, 16)
+size = Vector2(67, 16)
 
 [sub_resource type="RectangleShape2D" id="3"]
-size = Vector2(9, 8)
+size = Vector2(14, 15)
 
 [node name="RapierBall" type="RigidBody2D"]
 collision_layer = 4
@@ -54,7 +54,7 @@ scale = Vector2(0.5, 0.5)
 texture = ExtResource("2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword"]
-position = Vector2(13.5, -3)
+position = Vector2(11.5, -3)
 shape = SubResource("2")
 
 [node name="Tip" type="Area2D" parent="SwordPivot/Sword"]
@@ -70,7 +70,7 @@ offset_bottom = 2.0
 color = Color(1, 0.2, 0.2, 0.45)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword/Tip"]
-position = Vector2(15.5, -2)
+position = Vector2(13, -2.5)
 shape = SubResource("3")
 
 [node name="SfxSlash" type="AudioStreamPlayer2D" parent="."]
