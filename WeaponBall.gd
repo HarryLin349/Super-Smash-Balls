@@ -9,12 +9,13 @@ var _last_clash_ms := 0
 @export var damage_increment := 0.0
 @export var weapon_hit_knockback := 280.0
 @export var weapon_rotation_speed := 5
-@export var weapon_orbit_radius := 70.0
+@export var weapon_orbit_radius := 80.0
 @export var clash_impulse := 260.0
 @export var clash_knockback_suppress_time := 0.01
 
 @onready var weapon_pivot: Node2D = $SwordPivot
 @onready var weapon: Area2D = $SwordPivot/Sword
+@onready var weapon_sprite: Sprite2D = $SwordPivot/Sword/Sprite2D
 @onready var sfx_slash: AudioStreamPlayer2D = $SfxSlash
 @onready var sfx_clash: AudioStreamPlayer2D = $SfxClash
 
@@ -23,11 +24,23 @@ func _ready() -> void:
 	weapon_rotation_speed = absf(weapon_rotation_speed)
 
 	weapon.position = Vector2(weapon_orbit_radius, 0.0)
+	_apply_sprite_scale()
 	weapon.body_entered.connect(_on_weapon_body_entered)
 	weapon.area_entered.connect(_on_weapon_area_entered)
 	weapon.monitoring = true
 	weapon.monitorable = true
 	emit_signal("damage_changed", ball_id, damage)
+
+func _apply_sprite_scale() -> void:
+	if weapon_sprite == null:
+		return
+	var host := get_tree().current_scene
+	if host == null:
+		return
+	var scale_value = host.get("sprite_scale")
+	if typeof(scale_value) == TYPE_INT or typeof(scale_value) == TYPE_FLOAT:
+		if scale_value > 0.0:
+			weapon_sprite.scale *= float(scale_value)
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)

@@ -126,7 +126,7 @@ func _handle_out_of_bounds(ball, fell_below: bool) -> void:
 
 func _setup_balls() -> void:
 	ball_left.ball_id = 1
-	ball_left.ball_color = Color(0.9, 0.2, 0.2)
+	ball_left.ball_color = Color(0.2, 0.4, 0.9)
 	ball_right.ball_id = 2
 	ball_right.ball_color = Color(0.2, 0.8, 0.2)
 	ball_right.set_spin_direction(-1.0)
@@ -195,15 +195,7 @@ func _set_platform(platform: StaticBody2D, position_value: Vector2, size: Vector
 		visual.position = -size * 0.5
 	if platform.has_node("PlatformSprite"):
 		var platform_sprite: Sprite2D = platform.get_node("PlatformSprite")
-		var floor_scale := 1.0
-		if wall_bottom != null and wall_bottom.has_node("FloorSprite"):
-			var floor_sprite: Sprite2D = wall_bottom.get_node("FloorSprite")
-			var floor_tex := floor_sprite.texture
-			if floor_tex != null:
-				var floor_tex_size := floor_tex.get_size()
-				if floor_tex_size.x > 0.0:
-					floor_scale = (arena_size + 130) / floor_tex_size.x
-		var scaled := floor_scale * sprite_scale
+		var scaled := sprite_scale
 		var x_scale := -scaled if platform == platform_right else scaled
 		platform_sprite.scale = Vector2(x_scale, scaled)
 		platform_sprite.position = Vector2.ZERO
