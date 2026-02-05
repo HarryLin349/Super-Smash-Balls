@@ -6,6 +6,7 @@ class_name RapierBall
 @export var tipper_damage_increment := 1.0
 @export var tipper_lockout_time := 0.5
 @export var tipper_increment_cooldown := 0.1
+@export var tipper_trigger_cooldown := 0.5
 @export var rapier_knockback := 320.0
 
 @onready var tip_area: Area2D = $SwordPivot/Sword/Tip
@@ -14,6 +15,7 @@ class_name RapierBall
 var _tipper_lockout := 0.0
 var _last_hilt_hit_ms := 0
 var _last_tipper_increment_ms := 0
+var _last_tipper_trigger_ms := 0
 var _direction_timer := 0.0
 var _direction_angles := PackedFloat32Array([
 	0.0,
@@ -76,7 +78,8 @@ func _on_tip_body_entered(body: Node) -> void:
 		var now := Time.get_ticks_msec()
 		if now - _last_hilt_hit_ms <= 0.2:
 			return
-		var use_tipper := _tipper_lockout <= 0.0
+		var can_trigger_tipper := now - _last_tipper_trigger_ms >= int(tipper_trigger_cooldown * 1000.0)
+		var use_tipper := _tipper_lockout <= 0.0 and can_trigger_tipper
 		_swing_hit(ball, use_tipper)
 
 func _swing_hit(target: Ball, use_tipper: bool) -> void:
@@ -87,6 +90,7 @@ func _swing_hit(target: Ball, use_tipper: bool) -> void:
 		dmg = tipper_damage
 		if sfx_tipper != null:
 			sfx_tipper.play()
+		_last_tipper_trigger_ms = Time.get_ticks_msec()
 	else:
 		_tipper_lockout = tipper_lockout_time
 	target.take_damage(dmg, self, weapon_hit_knockback)

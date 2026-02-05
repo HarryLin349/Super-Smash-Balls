@@ -351,9 +351,11 @@ func _spawn_ko_effect(base_color: Color, position_value: Vector2, direction: Vec
 	host.add_child(effect)
 
 	var viewport_center_x := get_viewport_rect().size.x * 0.5
+	var viewport_size := get_viewport_rect().size
 	var distance_to_center : int = abs(position_value.x - viewport_center_x)
-	var x := clampf(position_value.x, out_of_bounds_min_x, out_of_bounds_max_x)
-	effect.global_position = Vector2(x, position_value.y)
+	var x := clampf(position_value.x, 0.0, viewport_size.x)
+	var y := clampf(position_value.y, 0.0, viewport_size.y)
+	effect.global_position = Vector2(x, y)
 
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
