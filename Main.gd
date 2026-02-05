@@ -12,9 +12,11 @@ var sprite_scale := 1.0
 @export var out_of_bounds_max_x := 1000.0
 @export var slowmo_scale := 0.5
 @export var slowmo_duration := 1.0
+@export var player1_scene: PackedScene = preload("res://SwordBall.tscn")
+@export var player2_scene: PackedScene = preload("res://RapierBall.tscn")
 
-@onready var ball_left: SwordBall = $BallLeft
-@onready var ball_right: DaggerBall = $BallRight
+@onready var player1_placeholder: Node2D = $BallLeft
+@onready var player2_placeholder: Node2D = $BallRight
 @onready var wall_bottom: StaticBody2D = $Walls/WallBottom
 @onready var wall_top: StaticBody2D = $Walls/WallTop
 @onready var wall_left: Wall = $Walls/WallLeft
@@ -34,8 +36,11 @@ var walldist := 58
 var _game_over := false
 var player1: Ball = null
 var player2: Ball = null
+var ball_left: Ball = null
+var ball_right: Ball = null
 
 func _ready() -> void:
+	_spawn_players()
 	call_deferred("_layout_arena")
 	_setup_balls()
 	_connect_signals()
@@ -128,10 +133,26 @@ func _setup_balls() -> void:
 	ball_left.ball_id = 1
 	ball_left.ball_color = Color(0.2, 0.4, 0.9)
 	ball_right.ball_id = 2
-	ball_right.ball_color = Color(0.2, 0.8, 0.2)
+	ball_right.ball_color = Color(0.75, 0.75, 0.78)
 	ball_right.set_spin_direction(-1.0)
 	player1 = ball_left
 	player2 = ball_right
+
+func _spawn_players() -> void:
+	ball_left = _spawn_player(player1_scene, player1_placeholder)
+	ball_right = _spawn_player(player2_scene, player2_placeholder)
+
+func _spawn_player(scene: PackedScene, placeholder: Node2D) -> Ball:
+	if scene == null or placeholder == null:
+		return placeholder as Ball
+	var parent := placeholder.get_parent()
+	var instance := scene.instantiate()
+	parent.add_child(instance)
+	if instance is Node2D:
+		instance.global_position = placeholder.global_position
+	instance.name = placeholder.name
+	placeholder.queue_free()
+	return instance as Ball
 
 func _connect_signals() -> void:
 	pass

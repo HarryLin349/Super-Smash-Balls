@@ -1,0 +1,90 @@
+[gd_scene load_steps=10 format=3 uid="uid://dtmdltypp5jlg"]
+
+[ext_resource type="Script" path="res://RapierBall.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bsbb5f50mo5pu" path="res://assets/weapons/rapier.png" id="2"]
+[ext_resource type="AudioStream" uid="uid://bfusr0dnwtpom" path="res://sfx/sword-slash.mp3" id="3"]
+[ext_resource type="AudioStream" uid="uid://4vax64ipyh0" path="res://sfx/metal-clang.mp3" id="4"]
+[ext_resource type="AudioStream" uid="uid://dl61i4aq4orlm" path="res://sfx/low-floor-tom.mp3" id="5"]
+[ext_resource type="AudioStream" uid="uid://sdpqsoxf41lg" path="res://sfx/ding.mp3" id="6"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 26.0
+
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(71, 16)
+
+[sub_resource type="RectangleShape2D" id="3"]
+size = Vector2(9, 8)
+
+[node name="RapierBall" type="RigidBody2D"]
+collision_layer = 4
+script = ExtResource("1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+
+[node name="HpLabel" type="Label" parent="."]
+offset_left = -60.0
+offset_top = -20.0
+offset_right = 60.0
+offset_bottom = 20.0
+text = "100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HitstunTrailLayer" type="Node2D" parent="."]
+z_index = 5
+
+[node name="SwordPivot" type="Node2D" parent="."]
+
+[node name="Sword" type="Area2D" parent="SwordPivot"]
+collision_layer = 2
+collision_mask = 6
+
+[node name="DebugHitbox" type="ColorRect" parent="SwordPivot/Sword"]
+offset_left = -35.0
+offset_top = -11.0
+offset_right = 50.0
+offset_bottom = 5.0
+color = Color(0, 1, 0, 0.35)
+
+[node name="Sprite2D" type="Sprite2D" parent="SwordPivot/Sword"]
+rotation = 1.5708
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword"]
+position = Vector2(13.5, -3)
+shape = SubResource("2")
+
+[node name="Tip" type="Area2D" parent="SwordPivot/Sword"]
+position = Vector2(39, 0)
+collision_layer = 2
+collision_mask = 6
+
+[node name="DebugHitbox" type="ColorRect" parent="SwordPivot/Sword/Tip"]
+offset_left = 11.0
+offset_top = -6.0
+offset_right = 20.0
+offset_bottom = 2.0
+color = Color(1, 0.2, 0.2, 0.45)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword/Tip"]
+position = Vector2(15.5, -2)
+shape = SubResource("3")
+
+[node name="SfxSlash" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3")
+volume_db = -6.0
+
+[node name="SfxClash" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4")
+volume_db = -6.0
+
+[node name="SfxFloorTom" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5")
+volume_db = -6.0
+
+[node name="SfxTipper" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("6")
+volume_db = -3.0

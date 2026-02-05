@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://Main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://w8pcyoyrqowc" path="res://SwordBall.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://DaggerBall.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://dtmdltypp5jlg" path="res://RapierBall.tscn" id="3"]
 [ext_resource type="Script" path="res://Wall.gd" id="4"]
 [ext_resource type="Script" path="res://Floor.gd" id="5"]
 [ext_resource type="AudioStream" uid="uid://dtw8o7wi62rte" path="res://sfx/ko-fx.mp3" id="6"]
