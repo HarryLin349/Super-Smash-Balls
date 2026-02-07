@@ -17,6 +17,8 @@ var weapon_scale_multiplier: float = 1.4
 @onready var stat_label: Label = $StatLabel
 @onready var damage_label: Label = $DamageLabel
 
+var x_offset := 40
+
 var _ball_ref: Ball = null
 
 func _ready() -> void:
@@ -54,9 +56,10 @@ func _apply_layout() -> void:
 		frame.rotation = deg_to_rad(frame_rotation_deg)
 		# Center the frame around the icon's origin.
 		frame.position = -size_value * 0.5
+		frame.position.x -= x_offset
 	var center := Vector2.ZERO
 	if ball_icon != null:
-		ball_icon.position = center + Vector2(size_value.x * 0.05, size_value.y * 0.05 + 10)
+		ball_icon.position = center + Vector2(size_value.x * 0.05 - x_offset, size_value.y * 0.05 + 10)
 		var scale_mult := ball_scale_multiplier
 		if typeof(scale_mult) != TYPE_FLOAT and typeof(scale_mult) != TYPE_INT:
 			scale_mult = 1.0
@@ -64,7 +67,7 @@ func _apply_layout() -> void:
 		ball_icon.queue_redraw()
 	if weapon_sprite != null:
 		weapon_sprite.rotation = deg_to_rad(weapon_rotation_deg)
-		weapon_sprite.position = center + Vector2(size_value.x * 0.32, -size_value.y * 0.1) + weapon_offset_px
+		weapon_sprite.position = center + Vector2(size_value.x * 0.32 - x_offset, -size_value.y * 0.1) + weapon_offset_px
 		var weapon_tex := weapon_sprite.texture
 		if weapon_tex != null:
 			var weapon_size := weapon_tex.get_size()
@@ -85,7 +88,7 @@ func _apply_layout() -> void:
 		damage_label.add_theme_constant_override("outline_size", 30)
 		damage_label.size = damage_label.get_minimum_size()
 		damage_label.pivot_offset = Vector2.ZERO
-		damage_label.position = Vector2(size_value.x * 0.5 + 14.0, -10.0)
+		damage_label.position = Vector2(size_value.x * 0.5 + 34.0 - x_offset, -10.0)
 		damage_height = damage_label.size.y
 		_update_damage_label()
 	if stat_label != null:

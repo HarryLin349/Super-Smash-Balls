@@ -63,10 +63,10 @@ collision_layer = 2
 collision_mask = 6
 
 [node name="DebugHitbox" type="ColorRect" parent="SwordPivot/Sword/Tip"]
-offset_left = 11.0
-offset_top = -7.0
+offset_left = 6.0
+offset_top = -10.0
 offset_right = 20.0
-offset_bottom = 2.0
+offset_bottom = 5.0
 color = Color(0.990804, 0.893721, 0.686788, 0.45)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword/Tip"]

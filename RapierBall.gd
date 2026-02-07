@@ -29,7 +29,7 @@ var _direction_angles := PackedFloat32Array([
 ])
 var _cardinal_tween: Tween = null
 var _orbit_time := 0.0
-var _orbit_amplitude := 12.0
+var _orbit_amplitude := 16.0
 var _orbit_period := 0.5
 
 func _ready() -> void:
