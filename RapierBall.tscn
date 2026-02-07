@@ -64,13 +64,13 @@ collision_mask = 6
 
 [node name="DebugHitbox" type="ColorRect" parent="SwordPivot/Sword/Tip"]
 offset_left = 11.0
-offset_top = -6.0
+offset_top = -7.0
 offset_right = 20.0
 offset_bottom = 2.0
-color = Color(1, 0.2, 0.2, 0.45)
+color = Color(0.990804, 0.893721, 0.686788, 0.45)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword/Tip"]
-position = Vector2(13, -2.5)
+position = Vector2(13, -3)
 shape = SubResource("3")
 
 [node name="SfxSlash" type="AudioStreamPlayer2D" parent="."]
@@ -87,4 +87,4 @@ volume_db = -6.0
 
 [node name="SfxTipper" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("6")
-volume_db = -3.0
+volume_db = 4.496

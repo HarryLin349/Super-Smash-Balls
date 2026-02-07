@@ -14,7 +14,7 @@ func _ready() -> void:
 	damage_increment = 0.0
 	max_double_jumps = 2
 	weight = 1.0
-	random_jump_chance_per_second *= 1.6
+	random_jump_chance_per_second *= 1.4
 	apex_double_jump_chance *= 1.8
 	attraction_force *= 1.2
 	attraction_speed_cap *= 1.2

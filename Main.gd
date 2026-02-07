@@ -27,8 +27,8 @@ var sprite_scale := 1.0
 @onready var sfx_ko: AudioStreamPlayer = $SfxKo
 @onready var sfx_victory: AudioStreamPlayer = $SfxVictory
 @onready var game_label: Label = $UI/GameLabel
-@onready var player1_label: Label = $UI/Player1Label
-@onready var player2_label: Label = $UI/Player2Label
+@onready var player1_name_sprite: Sprite2D = $UI/Player1NameSprite
+@onready var player2_name_sprite: Sprite2D = $UI/Player2NameSprite
 @onready var vs_sprite: Sprite2D = $UI/VsSprite
 @onready var player1_icon: PlayerIcon = $UI/Player1Icon
 @onready var player2_icon: PlayerIcon = $UI/Player2Icon
@@ -47,8 +47,7 @@ func _ready() -> void:
 	_setup_balls()
 	_connect_signals()
 	_setup_game_label()
-	_setup_player_labels()
-	_setup_player_icons()
+	_setup_player_name_sprites()
 
 func _process(delta: float) -> void:
 	if not _game_over:
@@ -74,7 +73,8 @@ func _layout_arena() -> void:
 		arena_background.size = viewport_size
 
 	var ceiling_top_y := ceiling_position.y - wall_thickness * 0.5
-	_layout_player_labels(ceiling_top_y, viewport_size.x)
+	_layout_player_name_sprites(ceiling_top_y, viewport_size.x)
+	_setup_player_icons()
 	var below_floor_y := floor_position.y + wall_thickness * 0.5 + 10.0
 	_layout_player_icons(below_floor_y, viewport_size.x)
 
@@ -251,74 +251,61 @@ func _setup_game_label() -> void:
 	game_label.offset_right = 0.0
 	game_label.offset_bottom = 0.0
 
-func _setup_player_labels() -> void:
-	_update_player_labels()
-	if player1_label != null:
-		player1_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		player1_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		player1_label.add_theme_font_size_override("font_size", 60)
-		player1_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-		player1_label.add_theme_constant_override("outline_size", 32)
-	if player2_label != null:
-		player2_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		player2_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		player2_label.add_theme_font_size_override("font_size", 60)
-		player2_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-		player2_label.add_theme_constant_override("outline_size", 32)
+const NAME_TEXTURE_SWORD := preload("res://assets/weapons/weapon_names/sword_name.png")
+const NAME_TEXTURE_DAGGER := preload("res://assets/weapons/weapon_names/dagger_name.png")
+const NAME_TEXTURE_RAPIER := preload("res://assets/weapons/weapon_names/rapier_name.png")
+
+func _setup_player_name_sprites() -> void:
+	if player1_name_sprite != null:
+		player1_name_sprite.texture = _get_name_texture(player1)
+	if player2_name_sprite != null:
+		player2_name_sprite.texture = _get_name_texture(player2)
 
 func _setup_player_icons() -> void:
 	if player1_icon != null:
 		player1_icon.weapon_rotation_deg = 20.0
-		player1_icon.setup(player1, Color(0.9, 0.2, 0.2))
+		player1_icon.setup(player1, Color(0.9, 0.2, 0.2), _get_name_texture(player1), sprite_scale)
 	if player2_icon != null:
-		player2_icon.weapon_rotation_deg = -55.0
-		player2_icon.weapon_offset_px = Vector2(-20.0, 0.0)
-		player2_icon.setup(player2, Color(0.2, 0.4, 0.9))
+		player2_icon.weapon_rotation_deg = -70.0
+		player2_icon.weapon_offset_px = Vector2(-20.0, 10.0)
+		player2_icon.setup(player2, Color(0.2, 0.4, 0.9), _get_name_texture(player2), sprite_scale)
 
-func _update_player_labels() -> void:
-	if player1_label != null:
-		player1_label.text = player1.ball_name.to_upper() if player1 != null else "PLAYER 1"
-	if player2_label != null:
-		player2_label.text = player2.ball_name.to_upper() if player2 != null else "PLAYER 2"
+func _get_name_texture(ball: Ball) -> Texture2D:
+	if ball is SwordBall:
+		return NAME_TEXTURE_SWORD
+	if ball is DaggerBall:
+		return NAME_TEXTURE_DAGGER
+	if ball is RapierBall:
+		return NAME_TEXTURE_RAPIER
+	return null
 
-func _layout_player_labels(ceiling_top_y: float, viewport_width: float) -> void:
-	_update_player_labels()
+func _layout_player_name_sprites(ceiling_top_y: float, viewport_width: float) -> void:
 	var band_height : float = max(0.0, ceiling_top_y)
-	var top_offset : float = 10.0
-	if band_height > 0.0 and player1_label != null:
-		top_offset = (band_height - player1_label.get_minimum_size().y) * 0.5
-	if player1_label != null:
-		player1_label.anchor_left = 0.0
-		player1_label.anchor_right = 0.0
-		player1_label.anchor_top = 0.0
-		player1_label.anchor_bottom = 0.0
-		player1_label.offset_left = 20.0
-		player1_label.offset_top = top_offset
-	if player2_label != null:
-		player2_label.anchor_left = 0.0
-		player2_label.anchor_right = 0.0
-		player2_label.anchor_top = 0.0
-		player2_label.anchor_bottom = 0.0
-		player2_label.offset_left = viewport_width - 20.0 - player2_label.get_minimum_size().x
-		if band_height > 0.0:
-			player2_label.offset_top = (band_height - player2_label.get_minimum_size().y) * 0.5
-		else:
-			player2_label.offset_top = 10.0
-	if vs_sprite != null:
+	var vs_center_y := (band_height * 0.5) if band_height > 0.0 else 10.0
+	if vs_sprite != null and vs_sprite.texture != null:
 		var vs_tex := vs_sprite.texture
 		var vs_size := Vector2.ZERO
-		if vs_tex != null:
-			var base_size := vs_tex.get_size()
-			var scaled := sprite_scale
-			if base_size.y > 0.0:
-				var fit_scale : float = 1.0
-				if band_height > 0.0:
-					fit_scale = min(1.0, band_height / base_size.y)
-				scaled *= fit_scale
-			vs_sprite.scale = Vector2(scaled, scaled)
-			vs_size = base_size * scaled
+		var base_size := vs_tex.get_size()
+		var scaled := sprite_scale
+		if base_size.y > 0.0:
+			var fit_scale : float = 1.0
+			if band_height > 0.0:
+				fit_scale = min(1.0, band_height / base_size.y)
+			scaled *= fit_scale
+		vs_sprite.scale = Vector2(scaled, scaled)
+		vs_size = base_size * scaled
 		var vs_y := (band_height - vs_size.y) * 0.5 if band_height > 0.0 else 10.0
-		vs_sprite.position = Vector2(viewport_width * 0.5, vs_y + vs_size.y * 0.5)
+		vs_center_y = vs_y + vs_size.y * 0.5
+	if player1_name_sprite != null and player1_name_sprite.texture != null:
+		player1_name_sprite.scale = Vector2(sprite_scale, sprite_scale)
+		var size := player1_name_sprite.texture.get_size() * player1_name_sprite.scale
+		player1_name_sprite.position = Vector2(viewport_width * 0.25, vs_center_y)
+	if player2_name_sprite != null and player2_name_sprite.texture != null:
+		player2_name_sprite.scale = Vector2(sprite_scale, sprite_scale)
+		var size := player2_name_sprite.texture.get_size() * player2_name_sprite.scale
+		player2_name_sprite.position = Vector2(viewport_width * 0.75, vs_center_y)
+	if vs_sprite != null:
+		vs_sprite.position = Vector2(viewport_width * 0.5, vs_center_y)
 		vs_sprite.z_as_relative = false
 		vs_sprite.z_index = 5
 		vs_sprite.visible = true

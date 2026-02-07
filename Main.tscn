@@ -166,11 +166,9 @@ texture = ExtResource("11")
 
 [node name="Player2Icon" parent="UI" instance=ExtResource("13")]
 
-[node name="Player1Label" type="Label" parent="UI"]
-text = "PLAYER 1"
+[node name="Player1NameSprite" type="Sprite2D" parent="UI"]
 
-[node name="Player2Label" type="Label" parent="UI"]
-text = "PLAYER 2"
+[node name="Player2NameSprite" type="Sprite2D" parent="UI"]
 
 [node name="VsSprite" type="Sprite2D" parent="UI"]
 texture = ExtResource("12")

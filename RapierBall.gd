@@ -28,6 +28,9 @@ var _direction_angles := PackedFloat32Array([
 	PI * 1.75
 ])
 var _cardinal_tween: Tween = null
+var _orbit_time := 0.0
+var _orbit_amplitude := 12.0
+var _orbit_period := 0.5
 
 func _ready() -> void:
 	super._ready()
@@ -35,6 +38,7 @@ func _ready() -> void:
 	weapon_rotation_speed = 0.0
 	max_double_jumps = 2
 	weapon_hit_knockback = rapier_knockback
+	random_jump_chance_per_second *= 1.2
 	damage = base_damage
 	damage_increment = 0.0
 	if tip_area != null:
@@ -47,6 +51,10 @@ func _physics_process(delta: float) -> void:
 	angular_velocity = 0.0
 	rotation = 0.0
 	_tipper_lockout = max(_tipper_lockout - delta, 0.0)
+	_orbit_time += delta
+	var phase := (_orbit_time / _orbit_period) * TAU
+	var offset := sin(phase) * _orbit_amplitude
+	weapon.position = Vector2(weapon_orbit_radius + offset, 0.0)
 	_direction_timer += delta
 	if _direction_timer >= 1.0:
 		_direction_timer -= 1.0

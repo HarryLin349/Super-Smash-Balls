@@ -18,7 +18,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var stage_center := Vector2.ZERO
 @export var ball_bounce_damp := 0.13
 @export var floor_y := 0.0
-@export var random_jump_chance_per_second := 0.6
+@export var random_jump_chance_per_second := 0.8
 @export var random_jump_impulse := 700.0
 @export var random_jump_horizontal_impulse := 60.0
 @export var hitstun_base_time := 0.5
@@ -35,6 +35,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var damage_knockback_cooldown := 0.0 # prev 0.12 to prevent chains
 @export var outline_thickness := 6.0
 @export var edge_double_jump_margin := 60.0
+@export var damage_knockback_multiplier := 0.03
 
 static var _hit_stop_active := false
 var _flash_timer := 0.0
@@ -135,7 +136,7 @@ func take_damage(amount: float, source: Ball = null, knockback_impulse: float = 
 		var base_impulse := damage_knockback_impulse
 		if knockback_impulse >= 0.0:
 			base_impulse = knockback_impulse
-		var scaled_impulse: float = base_impulse * (1.0 + float(damage_taken) * 0.05) * weight_scale
+		var scaled_impulse: float = base_impulse * (1.0 + float(damage_taken) * damage_knockback_multiplier) * weight_scale
 		apply_impulse(direction * scaled_impulse)
 
 func suppress_knockback(duration_seconds: float) -> void:

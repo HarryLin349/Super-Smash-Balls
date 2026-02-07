@@ -10,8 +10,8 @@ class_name PlayerIcon
 var ball_scale_multiplier: float = 1.0
 @export var weapon_scale_ratio := 1.2
 var weapon_scale_multiplier: float = 1.4
-@export var name_font_size := 24
-@export var name_outline_size := 1
+@export var name_font_size := 50
+@export var name_outline_size := 20
 
 @onready var frame: ColorRect = $Frame
 @onready var ball_icon: BallIcon = $Ball
@@ -30,7 +30,7 @@ func _process(_delta: float) -> void:
 	else:
 		_update_stat_label()
 
-func setup(ball: Ball, frame_color: Color) -> void:
+func setup(ball: Ball, frame_color: Color, _name_tex: Texture2D = null, _name_scale_value: float = 1.0) -> void:
 	_ball_ref = ball
 	if frame != null:
 		var color_value := frame_color
@@ -93,7 +93,10 @@ func _apply_layout() -> void:
 		stat_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		stat_label.size = stat_label.get_minimum_size()
 		stat_label.pivot_offset = Vector2.ZERO
-		stat_label.position = Vector2(center.x - stat_label.size.x * 0.5, size_value.y * 0.5 + 42.0)
+		var name_height := 0.0
+		if name_label != null:
+			name_height = name_label.size.y
+		stat_label.position = Vector2(center.x - stat_label.size.x * 0.5, size_value.y * 0.5 + 6.0 + name_height + 6.0)
 		_update_stat_label()
 
 func _update_stat_label() -> void:
@@ -109,7 +112,7 @@ func _update_stat_label() -> void:
 		stat_label.text = "Spin: " + str(snappedf(spin_value, 0.1))
 	elif _ball_ref is RapierBall:
 		var rapier := _ball_ref as RapierBall
-		stat_label.text = "Tipper: " + str(int(round(rapier.tipper_damage)))
+		stat_label.text = "Tip DMG: " + str(int(round(rapier.tipper_damage)))
 	else:
 		stat_label.text = ""
 
