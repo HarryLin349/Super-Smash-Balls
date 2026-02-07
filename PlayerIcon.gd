@@ -122,8 +122,28 @@ func _update_damage_label() -> void:
 	damage_label.add_theme_font_size_override("font_size", 60)
 	damage_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
 	damage_label.add_theme_constant_override("outline_size", 20)
-	damage_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	damage_label.text = str(int(round(_ball_ref.damage_taken))) + "%"
+	var dmg := float(_ball_ref.damage_taken)
+	damage_label.add_theme_color_override("font_color", _damage_color(dmg))
+	damage_label.text = str(int(round(dmg))) + "%"
+
+func _damage_color(value: float) -> Color:
+	var stops := [
+		{ "p": 0.0, "c": Color(1, 1, 1, 1) }, # #FFFFFF
+		{ "p": 30.0, "c": Color(1.0, 0.871, 0.478, 1) }, # #FFDE7A
+		{ "p": 50.0, "c": Color(1.0, 0.729, 0.412, 1) }, # #FFBA69
+		{ "p": 70.0, "c": Color(1.0, 0.333, 0.231, 1) }, # #FF553B
+		{ "p": 100.0, "c": Color(0.871, 0.118, 0.0, 1) }, # #DE1E00
+		{ "p": 200.0, "c": Color(0.529, 0.082, 0.0, 1) } # #871500
+	]
+	if value <= stops[0]["p"]:
+		return stops[0]["c"]
+	for i in range(stops.size() - 1):
+		var a = stops[i]
+		var b = stops[i + 1]
+		if value <= b["p"]:
+			var t : float = (value - a["p"]) / max(b["p"] - a["p"], 0.001)
+			return a["c"].lerp(b["c"], t)
+	return stops[stops.size() - 1]["c"]
 
 func _find_weapon_texture(ball: Ball) -> Texture2D:
 	var sprite := ball.get_node_or_null("SwordPivot/Sword/Sprite2D")
