@@ -10,14 +10,12 @@ class_name PlayerIcon
 var ball_scale_multiplier: float = 1.0
 @export var weapon_scale_ratio := 1.2
 var weapon_scale_multiplier: float = 1.4
-@export var name_font_size := 50
-@export var name_outline_size := 20
 
 @onready var frame: ColorRect = $Frame
 @onready var ball_icon: BallIcon = $Ball
 @onready var weapon_sprite: Sprite2D = $Weapon
-@onready var name_label: Label = $NameLabel
 @onready var stat_label: Label = $StatLabel
+@onready var damage_label: Label = $DamageLabel
 
 var _ball_ref: Ball = null
 
@@ -29,6 +27,7 @@ func _process(_delta: float) -> void:
 		_apply_layout()
 	else:
 		_update_stat_label()
+		_update_damage_label()
 
 func setup(ball: Ball, frame_color: Color, _name_tex: Texture2D = null, _name_scale_value: float = 1.0) -> void:
 	_ball_ref = ball
@@ -42,8 +41,6 @@ func setup(ball: Ball, frame_color: Color, _name_tex: Texture2D = null, _name_sc
 		var weapon_tex := _find_weapon_texture(ball)
 		if weapon_tex != null:
 			weapon_sprite.texture = weapon_tex
-		if name_label != null:
-			name_label.text = ball.ball_name.to_upper()
 		_update_stat_label()
 	_apply_layout()
 
@@ -79,24 +76,24 @@ func _apply_layout() -> void:
 					weapon_mult = 1.0
 				weapon_scale *= float(weapon_mult)
 				weapon_sprite.scale = Vector2(weapon_scale, weapon_scale)
-	if name_label != null:
-		name_label.add_theme_font_size_override("font_size", name_font_size)
-		name_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
-		name_label.add_theme_constant_override("outline_size", name_outline_size)
-		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		name_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-		name_label.size = name_label.get_minimum_size()
-		name_label.pivot_offset = Vector2.ZERO
-		name_label.position = Vector2(center.x - name_label.size.x * 0.5, size_value.y * 0.5 + 6.0)
+	var damage_height := 0.0
+	if damage_label != null:
+		damage_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		damage_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		damage_label.add_theme_font_size_override("font_size", 60)
+		damage_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		damage_label.add_theme_constant_override("outline_size", 30)
+		damage_label.size = damage_label.get_minimum_size()
+		damage_label.pivot_offset = Vector2.ZERO
+		damage_label.position = Vector2(size_value.x * 0.5 + 14.0, -10.0)
+		damage_height = damage_label.size.y
+		_update_damage_label()
 	if stat_label != null:
 		stat_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		stat_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 		stat_label.size = stat_label.get_minimum_size()
 		stat_label.pivot_offset = Vector2.ZERO
-		var name_height := 0.0
-		if name_label != null:
-			name_height = name_label.size.y
-		stat_label.position = Vector2(center.x - stat_label.size.x * 0.5, size_value.y * 0.5 + 6.0 + name_height + 6.0)
+		stat_label.position = Vector2(center.x - stat_label.size.x * 0.5, size_value.y * 0.5 + 20.0)
 		_update_stat_label()
 
 func _update_stat_label() -> void:
@@ -112,9 +109,18 @@ func _update_stat_label() -> void:
 		stat_label.text = "Spin: " + str(snappedf(spin_value, 0.1))
 	elif _ball_ref is RapierBall:
 		var rapier := _ball_ref as RapierBall
-		stat_label.text = "Tip DMG: " + str(int(round(rapier.tipper_damage)))
+		stat_label.text = "Tipper DMG: " + str(int(round(rapier.tipper_damage)))
 	else:
 		stat_label.text = ""
+
+func _update_damage_label() -> void:
+	if damage_label == null or _ball_ref == null:
+		return
+	damage_label.add_theme_font_size_override("font_size", 60)
+	damage_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+	damage_label.add_theme_constant_override("outline_size", 20)
+	damage_label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	damage_label.text = str(int(round(_ball_ref.damage_taken))) + "%"
 
 func _find_weapon_texture(ball: Ball) -> Texture2D:
 	var sprite := ball.get_node_or_null("SwordPivot/Sword/Sprite2D")
