@@ -144,9 +144,9 @@ func _handle_out_of_bounds(ball, fell_below: bool) -> void:
 
 func _setup_balls() -> void:
 	ball_left.ball_id = 1
-	ball_left.ball_color = Color(0.2, 0.4, 0.9)
+	ball_left.ball_color = _get_ball_color(ball_left)
 	ball_right.ball_id = 2
-	ball_right.ball_color = Color(0.75, 0.75, 0.78)
+	ball_right.ball_color = _get_ball_color(ball_right)
 	ball_right.set_spin_direction(-1.0)
 	player1 = ball_left
 	player2 = ball_right
@@ -371,11 +371,20 @@ func _setup_player_name_sprites() -> void:
 func _setup_player_icons() -> void:
 	if player1_icon != null:
 		player1_icon.weapon_rotation_deg = 20.0
-		player1_icon.setup(player1, Color(0.9, 0.2, 0.2), _get_name_texture(player1), sprite_scale)
+		player1_icon.setup(player1, _get_ball_color(player1), _get_name_texture(player1), sprite_scale)
 	if player2_icon != null:
 		player2_icon.weapon_rotation_deg = -70.0
 		player2_icon.weapon_offset_px = Vector2(-20.0, 10.0)
-		player2_icon.setup(player2, Color(0.2, 0.4, 0.9), _get_name_texture(player2), sprite_scale)
+		player2_icon.setup(player2, _get_ball_color(player2), _get_name_texture(player2), sprite_scale)
+
+func _get_ball_color(ball: Ball) -> Color:
+	if ball is SwordBall:
+		return Color(0.2, 0.4, 0.9)
+	if ball is DaggerBall:
+		return Color(0.2, 0.8, 0.3)
+	if ball is RapierBall:
+		return Color(0.75, 0.75, 0.78)
+	return Color(0.9, 0.9, 0.9)
 
 func _get_name_texture(ball: Ball) -> Texture2D:
 	if ball is SwordBall:
