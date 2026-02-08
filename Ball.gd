@@ -114,30 +114,45 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, radius + outline_thickness, Color(0, 0, 0, 1))
 	draw_circle(Vector2.ZERO, radius, draw_color)
 
-func take_damage(amount: float, source: Ball = null, knockback_impulse: float = -1.0) -> void:
+func take_damage(amount: float, source: Ball = null, knockback_impulse: float = -1.0, apply_knockback: bool = true) -> void:
 	damage_taken = maxf(damage_taken + amount, 0.0)
 	_flash_timer = hit_flash_time
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
 	_enter_hitstun()
-	if source != null:
-		if Time.get_ticks_msec() < _suppress_knockback_until:
+	if apply_knockback and source != null:
+		_apply_damage_knockback(source, knockback_impulse)
+
+func apply_delayed_knockback(source: Ball, knockback_impulse: float, delay: float) -> void:
+	if source == null:
+		return
+	var timer := get_tree().create_timer(delay, true, false, true)
+	timer.timeout.connect(func() -> void:
+		if not is_instance_valid(self):
 			return
-		var now := Time.get_ticks_msec()
-		if now - _last_damage_knockback_ms < int(damage_knockback_cooldown * 1000.0):
+		if not is_instance_valid(source):
 			return
-		_last_damage_knockback_ms = now
-		linear_velocity *= 0.1
-		var direction := (global_position - source.global_position).normalized()
-		if direction == Vector2.ZERO:
-			direction = Vector2.RIGHT
-		direction = direction.rotated(_random_knockback_variance())
-		var weight_scale: float = 1.0 / maxf(weight, 0.1)
-		var base_impulse := damage_knockback_impulse
-		if knockback_impulse >= 0.0:
-			base_impulse = knockback_impulse
-		var scaled_impulse: float = base_impulse * (1.0 + float(damage_taken) * damage_knockback_multiplier) * weight_scale
-		apply_impulse(direction * scaled_impulse)
+		_apply_damage_knockback(source, knockback_impulse)
+	)
+
+func _apply_damage_knockback(source: Ball, knockback_impulse: float) -> void:
+	if Time.get_ticks_msec() < _suppress_knockback_until:
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_damage_knockback_ms < int(damage_knockback_cooldown * 1000.0):
+		return
+	_last_damage_knockback_ms = now
+	linear_velocity *= 0.1
+	var direction := (global_position - source.global_position).normalized()
+	if direction == Vector2.ZERO:
+		direction = Vector2.RIGHT
+	direction = direction.rotated(_random_knockback_variance())
+	var weight_scale: float = 1.0 / maxf(weight, 0.1)
+	var base_impulse := damage_knockback_impulse
+	if knockback_impulse >= 0.0:
+		base_impulse = knockback_impulse
+	var scaled_impulse: float = base_impulse * (1.0 + float(damage_taken) * damage_knockback_multiplier) * weight_scale
+	apply_impulse(direction * scaled_impulse)
 
 func suppress_knockback(duration_seconds: float) -> void:
 	_suppress_knockback_until = Time.get_ticks_msec() + int(duration_seconds * 1000.0)

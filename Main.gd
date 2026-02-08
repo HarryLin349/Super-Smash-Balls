@@ -14,6 +14,7 @@ var sprite_scale := 1.0
 @export var slowmo_duration := 1.0
 @export var player1_scene: PackedScene = preload("res://SwordBall.tscn")
 @export var player2_scene: PackedScene = preload("res://RapierBall.tscn")
+const MENU_SCENE := preload("res://SelectionMenu.tscn")
 
 @onready var player1_placeholder: Node2D = $BallLeft
 @onready var player2_placeholder: Node2D = $BallRight
@@ -43,18 +44,16 @@ var player1: Ball = null
 var player2: Ball = null
 var ball_left: Ball = null
 var ball_right: Ball = null
+var _selection_menu: SelectionMenu = null
+var _selecting_player := 1
+var _match_started := false
 
 func _ready() -> void:
-	_spawn_players()
-	call_deferred("_layout_arena")
-	_setup_balls()
-	_connect_signals()
+	_show_selection_menu()
 	_setup_game_label()
-	_setup_player_name_sprites()
-	_play_intro_names()
 
 func _process(delta: float) -> void:
-	if not _game_over:
+	if _match_started and not _game_over:
 		_check_out_of_bounds()
 
 func _layout_arena() -> void:
@@ -171,7 +170,7 @@ func _play_intro_names() -> void:
 		sfx_name_p2.stream = _get_name_sfx(player2)
 	_play_name_sfx(sfx_name_p1, 0)
 	_play_name_sfx(sfx_versus, 1.0)
-	_play_name_sfx(sfx_name_p2, 2.0)
+	_play_name_sfx(sfx_name_p2, 2.5)
 
 func _play_name_sfx(player: AudioStreamPlayer, delay: float) -> void:
 	if player == null:
@@ -192,6 +191,61 @@ func _get_name_sfx(ball: Ball) -> AudioStream:
 
 func _connect_signals() -> void:
 	pass
+
+func _show_selection_menu() -> void:
+	if MENU_SCENE == null:
+		_start_match()
+		return
+	_selection_menu = MENU_SCENE.instantiate() as SelectionMenu
+	if _selection_menu == null:
+		_start_match()
+		return
+	add_child(_selection_menu)
+	_selection_menu.set_prompt("SELECT PLAYER 1")
+	_selection_menu.ball_type_selected.connect(_on_ball_type_selected)
+
+func _on_ball_type_selected(ball_type: String) -> void:
+	var scene := _get_scene_for_ball_type(ball_type)
+	if scene == null:
+		return
+	if _selecting_player == 1:
+		player1_scene = scene
+		_selecting_player = 2
+		if _selection_menu != null:
+			_selection_menu.set_prompt("SELECT PLAYER 2")
+		return
+	player2_scene = scene
+	if _selection_menu != null:
+		_selection_menu.set_buttons_enabled(false)
+	var timer := get_tree().create_timer(1.0, true, false, true)
+	timer.timeout.connect(func() -> void:
+		_start_match()
+	)
+
+func _get_scene_for_ball_type(ball_type: String) -> PackedScene:
+	match ball_type:
+		"SwordBall":
+			return preload("res://SwordBall.tscn")
+		"RapierBall":
+			return preload("res://RapierBall.tscn")
+		"DaggerBall":
+			return preload("res://DaggerBall.tscn")
+		_:
+			return null
+
+func _start_match() -> void:
+	if _match_started:
+		return
+	_match_started = true
+	if _selection_menu != null:
+		_selection_menu.queue_free()
+		_selection_menu = null
+	_spawn_players()
+	call_deferred("_layout_arena")
+	_setup_balls()
+	_connect_signals()
+	_setup_player_name_sprites()
+	_play_intro_names()
 
 func _set_wall(wall: StaticBody2D, position_value: Vector2, size: Vector2) -> void:
 	var collision_shape: CollisionShape2D = wall.get_node("CollisionShape2D")

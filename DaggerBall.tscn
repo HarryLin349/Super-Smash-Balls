@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://DaggerBall.gd" id=1]
-[ext_resource type="Texture2D" path="res://Daggericon.png" id=2]
+[ext_resource type="Texture2D" path="res://assets/weapons/dagger.png" id=2]
 [ext_resource type="AudioStream" path="res://sfx/sword-slash.mp3" id=3]
 [ext_resource type="AudioStream" path="res://sfx/metal-clang.mp3" id=4]
 [ext_resource type="AudioStream" path="res://sfx/low-floor-tom.mp3" id=5]
@@ -42,8 +42,8 @@ monitorable = true
 
 [node name="Sprite2D" type="Sprite2D" parent="SwordPivot/Sword"]
 texture = ExtResource( 2 )
-scale = Vector2(0.08, 0.08)
-rotation = 0.785398
+scale = Vector2(0.5, 0.5)
+rotation = 1.5708
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="SwordPivot/Sword"]
 shape = SubResource( 2 )
