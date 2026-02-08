@@ -18,6 +18,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var stage_center := Vector2.ZERO
 @export var ball_bounce_damp := 0.13
 @export var floor_y := 0.0
+@export var floor_half_width := 0.0
 @export var random_jump_chance_per_second := 1.2
 @export var random_jump_impulse := 700.0
 @export var random_jump_horizontal_impulse := 60.0
@@ -35,6 +36,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var damage_knockback_cooldown := 0.0 # prev 0.12 to prevent chains
 @export var outline_thickness := 6.0
 @export var edge_double_jump_margin := 60.0
+@export var edge_recovery_margin := 40.0
 @export var damage_knockback_multiplier := 0.03
 
 static var _hit_stop_active := false
@@ -42,6 +44,7 @@ var _flash_timer := 0.0
 var _last_velocity := Vector2.ZERO
 var _apex_cooldown := 0.0
 var _jump_cooldown := 0.0
+var _recovery_cooldown := 0.0
 var _hitstun_time_left := 0.0
 var _in_hitstun := false
 var _trail_timer := 0.0
@@ -81,6 +84,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_apex_cooldown = max(_apex_cooldown - delta, 0.0)
 	_jump_cooldown = max(_jump_cooldown - delta, 0.0)
+	_recovery_cooldown = max(_recovery_cooldown - delta, 0.0)
 	if _hitstun_time_left > 0.0:
 		_hitstun_time_left = max(_hitstun_time_left - delta, 0.0)
 	if _in_hitstun and _hitstun_time_left <= 0.0:
@@ -95,6 +99,7 @@ func _physics_process(delta: float) -> void:
 			_spawn_hitstun_particle()
 			_trail_timer = hitstun_trail_interval
 	_check_edge_double_jump()
+	_check_offstage_recovery()
 	_check_apex_double_jump()
 	_check_random_jump(delta)
 	_apply_attraction_force()
@@ -338,6 +343,34 @@ func _check_random_jump(delta: float) -> void:
 		var x_impulse := rng.randf_range(-random_jump_horizontal_impulse, random_jump_horizontal_impulse)
 		apply_impulse(Vector2(x_impulse, -random_jump_impulse))
 		_jump_cooldown = 0.35
+
+func _check_offstage_recovery() -> void:
+	if _recovery_cooldown > 0.0:
+		return
+	if _double_jumps_used >= max_double_jumps:
+		return
+	if _is_on_floor():
+		return
+	if floor_half_width <= 0.0:
+		return
+	var x_offset := global_position.x - stage_center.x
+	var abs_offset := absf(x_offset)
+	var no_floor_below := abs_offset > floor_half_width
+	var near_edge := abs_offset > floor_half_width - edge_recovery_margin
+	var moving_away := false
+	if abs_offset > 0.01 and absf(linear_velocity.x) > 5.0:
+		moving_away = signf(linear_velocity.x) == signf(x_offset)
+	if not no_floor_below and not (near_edge and moving_away):
+		return
+	var x_dir := 0.0
+	if abs_offset > 0.01:
+		x_dir = -signf(x_offset)
+	else:
+		x_dir = 1.0
+	apply_impulse(Vector2(x_dir * apex_horizontal_impulse, -apex_jump_impulse))
+	_spawn_double_jump_ring()
+	_recovery_cooldown = 0.3
+	_double_jumps_used += 1
 
 func _random_knockback_variance() -> float:
 	var rng := RandomNumberGenerator.new()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://0iqtxpu3wuh3"]
+[gd_scene load_steps=24 format=3 uid="uid://0iqtxpu3wuh3"]
 
 [ext_resource type="Script" path="res://Main.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://w8pcyoyrqowc" path="res://SwordBall.tscn" id="2"]
@@ -11,9 +11,10 @@
 [ext_resource type="Texture2D" uid="uid://cwa26wt6svnko" path="res://assets/platform.png" id="11"]
 [ext_resource type="Texture2D" uid="uid://bu4oc0jar5o7j" path="res://assets/vs.png" id="12"]
 [ext_resource type="PackedScene" uid="uid://csom08aioyt31" path="res://PlayerIcon.tscn" id="13"]
-[ext_resource type="AudioStream" uid="uid://ctxkhst2wx17u" path="res://sfx/names/versus.mp3" id="14"]
-[ext_resource type="AudioStream" uid="uid://3ihujlv1y7qy" path="res://sfx/names/sword.mp3" id="15"]
-[ext_resource type="AudioStream" path="res://sfx/names/untitled.mp3" id="16"]
+[ext_resource type="AudioStream" uid="uid://bdthxl3fybtwy" path="res://sfx/names/versus.wav" id="14"]
+[ext_resource type="AudioStream" uid="uid://c0i7qqrhnfbhw" path="res://sfx/names/sword.wav" id="15"]
+[ext_resource type="AudioStream" uid="uid://gfytjn2k13of" path="res://sfx/names/rapier.wav" id="16"]
+[ext_resource type="AudioStream" uid="uid://3sgngtvfy42n" path="res://sfx/names/Fight.wav" id="17"]
 
 [sub_resource type="Shader" id="8"]
 code = "shader_type canvas_item;
@@ -78,6 +79,9 @@ stream = ExtResource("14")
 
 [node name="SfxNameP2" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("16")
+
+[node name="SfxFight" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17")
 
 [node name="Walls" type="Node2D" parent="."]
 

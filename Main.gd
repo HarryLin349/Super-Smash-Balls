@@ -30,6 +30,7 @@ const MENU_SCENE := preload("res://SelectionMenu.tscn")
 @onready var sfx_name_p1: AudioStreamPlayer = $SfxNameP1
 @onready var sfx_versus: AudioStreamPlayer = $SfxVersus
 @onready var sfx_name_p2: AudioStreamPlayer = $SfxNameP2
+@onready var sfx_fight: AudioStreamPlayer = $SfxFight
 @onready var game_label: Label = $UI/GameLabel
 @onready var player1_name_sprite: Sprite2D = $UI/Player1NameSprite
 @onready var player2_name_sprite: Sprite2D = $UI/Player2NameSprite
@@ -88,6 +89,9 @@ func _layout_arena() -> void:
 	ball_right.stage_center = center
 	ball_left.floor_y = floor_y
 	ball_right.floor_y = floor_y
+	var floor_half_width := floor_width * 0.5
+	ball_left.floor_half_width = floor_half_width
+	ball_right.floor_half_width = floor_half_width
 
 	var platform_y := center.y + platform_height_offset
 	var left_x := center.x - arena_size_value * 0.5 + platform_inset + platform_width * 0.5
@@ -165,18 +169,31 @@ func _spawn_player(scene: PackedScene, placeholder: Node2D) -> Ball:
 
 func _play_intro_names() -> void:
 	if sfx_name_p1 != null:
+		sfx_name_p1.process_mode = Node.PROCESS_MODE_ALWAYS
 		sfx_name_p1.stream = _get_name_sfx(player1)
 	if sfx_name_p2 != null:
+		sfx_name_p2.process_mode = Node.PROCESS_MODE_ALWAYS
 		sfx_name_p2.stream = _get_name_sfx(player2)
+	if sfx_versus != null:
+		sfx_versus.process_mode = Node.PROCESS_MODE_ALWAYS
+		sfx_versus.stream = NAME_SFX_VERSUS
+	if sfx_fight != null:
+		sfx_fight.process_mode = Node.PROCESS_MODE_ALWAYS
+		sfx_fight.stream = NAME_SFX_FIGHT
 	_play_name_sfx(sfx_name_p1, 0)
 	_play_name_sfx(sfx_versus, 1.0)
-	_play_name_sfx(sfx_name_p2, 2.5)
+	_play_name_sfx(sfx_name_p2, 2.0)
+	_play_name_sfx(sfx_fight, 3.0)
 
 func _play_name_sfx(player: AudioStreamPlayer, delay: float) -> void:
 	if player == null:
 		return
 	var timer := get_tree().create_timer(delay, true, false, true)
 	timer.timeout.connect(func() -> void:
+		player.stream_paused = false
+		player.bus = "Master"
+		player.volume_db = 0.0
+		player.stop()
 		player.play()
 	)
 
@@ -339,9 +356,11 @@ func _setup_game_label() -> void:
 const NAME_TEXTURE_SWORD := preload("res://assets/weapons/weapon_names/sword_name.png")
 const NAME_TEXTURE_DAGGER := preload("res://assets/weapons/weapon_names/dagger_name.png")
 const NAME_TEXTURE_RAPIER := preload("res://assets/weapons/weapon_names/rapier_name.png")
-const NAME_SFX_SWORD := preload("res://sfx/names/sword.mp3")
-const NAME_SFX_DAGGER := preload("res://sfx/names/dagger.mp3")
-const NAME_SFX_RAPIER := preload("res://sfx/names/rapier.mp3")
+const NAME_SFX_SWORD := preload("res://sfx/names/sword.wav")
+const NAME_SFX_DAGGER := preload("res://sfx/names/dagger.wav")
+const NAME_SFX_RAPIER := preload("res://sfx/names/rapier.wav")
+const NAME_SFX_VERSUS := preload("res://sfx/names/versus.wav")
+const NAME_SFX_FIGHT := preload("res://sfx/names/Fight.wav")
 
 func _setup_player_name_sprites() -> void:
 	if player1_name_sprite != null:
