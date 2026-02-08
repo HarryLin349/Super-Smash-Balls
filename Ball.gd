@@ -125,6 +125,7 @@ func take_damage(amount: float, source: Ball = null, knockback_impulse: float = 
 	_update_hp_label()
 	emit_signal("damage_taken_changed", ball_id, damage_taken)
 	_enter_hitstun()
+	_double_jumps_used = 0
 	if apply_knockback and source != null:
 		_apply_damage_knockback(source, knockback_impulse)
 
@@ -367,6 +368,7 @@ func _check_offstage_recovery() -> void:
 		x_dir = -signf(x_offset)
 	else:
 		x_dir = 1.0
+	linear_velocity *= 0.8
 	apply_impulse(Vector2(x_dir * apex_horizontal_impulse, -apex_jump_impulse))
 	_spawn_double_jump_ring()
 	_recovery_cooldown = 0.3

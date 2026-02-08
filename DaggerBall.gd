@@ -3,7 +3,7 @@ class_name DaggerBall
 
 @export var dagger_rotation_multiplier := 2.0
 @export var dagger_damage_impulse_multiplier := 0.9
-@export var dagger_rotation_increment := 8.0
+@export var dagger_rotation_increment := 5.0
 @export var dagger_rotation_soft_cap := 45.0
 
 func _ready() -> void:
