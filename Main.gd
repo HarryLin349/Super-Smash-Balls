@@ -26,6 +26,9 @@ var sprite_scale := 1.0
 @onready var platform_right: StaticBody2D = $Platforms/PlatformRight
 @onready var sfx_ko: AudioStreamPlayer = $SfxKo
 @onready var sfx_victory: AudioStreamPlayer = $SfxVictory
+@onready var sfx_name_p1: AudioStreamPlayer = $SfxNameP1
+@onready var sfx_versus: AudioStreamPlayer = $SfxVersus
+@onready var sfx_name_p2: AudioStreamPlayer = $SfxNameP2
 @onready var game_label: Label = $UI/GameLabel
 @onready var player1_name_sprite: Sprite2D = $UI/Player1NameSprite
 @onready var player2_name_sprite: Sprite2D = $UI/Player2NameSprite
@@ -48,6 +51,7 @@ func _ready() -> void:
 	_connect_signals()
 	_setup_game_label()
 	_setup_player_name_sprites()
+	_play_intro_names()
 
 func _process(delta: float) -> void:
 	if not _game_over:
@@ -159,6 +163,32 @@ func _spawn_player(scene: PackedScene, placeholder: Node2D) -> Ball:
 	placeholder.queue_free()
 	return instance as Ball
 
+func _play_intro_names() -> void:
+	if sfx_name_p1 != null:
+		sfx_name_p1.stream = _get_name_sfx(player1)
+	if sfx_name_p2 != null:
+		sfx_name_p2.stream = _get_name_sfx(player2)
+	_play_name_sfx(sfx_name_p1, 0)
+	_play_name_sfx(sfx_versus, 1.0)
+	_play_name_sfx(sfx_name_p2, 2.0)
+
+func _play_name_sfx(player: AudioStreamPlayer, delay: float) -> void:
+	if player == null:
+		return
+	var timer := get_tree().create_timer(delay, true, false, true)
+	timer.timeout.connect(func() -> void:
+		player.play()
+	)
+
+func _get_name_sfx(ball: Ball) -> AudioStream:
+	if ball is SwordBall:
+		return NAME_SFX_SWORD
+	elif ball is DaggerBall:
+		return NAME_SFX_DAGGER
+	elif ball is RapierBall:
+		return NAME_SFX_RAPIER
+	return null
+
 func _connect_signals() -> void:
 	pass
 
@@ -254,6 +284,9 @@ func _setup_game_label() -> void:
 const NAME_TEXTURE_SWORD := preload("res://assets/weapons/weapon_names/sword_name.png")
 const NAME_TEXTURE_DAGGER := preload("res://assets/weapons/weapon_names/dagger_name.png")
 const NAME_TEXTURE_RAPIER := preload("res://assets/weapons/weapon_names/rapier_name.png")
+const NAME_SFX_SWORD := preload("res://sfx/names/sword.mp3")
+const NAME_SFX_DAGGER := preload("res://sfx/names/dagger.mp3")
+const NAME_SFX_RAPIER := preload("res://sfx/names/rapier.mp3")
 
 func _setup_player_name_sprites() -> void:
 	if player1_name_sprite != null:

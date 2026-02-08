@@ -4,9 +4,9 @@ class_name RapierBall
 @export var base_damage := 1.0
 @export var tipper_damage := 1.0
 @export var tipper_damage_increment := 1.0
-@export var tipper_lockout_time := 0.5
+@export var tipper_lockout_time := 0.2
 @export var tipper_increment_cooldown := 0.1
-@export var tipper_trigger_cooldown := 0.5
+@export var tipper_trigger_cooldown := 0.2
 @export var rapier_knockback := 320.0
 
 @onready var tip_area: Area2D = $SwordPivot/Sword/Tip
@@ -29,7 +29,7 @@ var _direction_angles := PackedFloat32Array([
 ])
 var _cardinal_tween: Tween = null
 var _orbit_time := 0.0
-var _orbit_amplitude := 16.0
+var _orbit_amplitude := 25.0
 var _orbit_period := 0.5
 
 func _ready() -> void:

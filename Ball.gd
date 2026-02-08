@@ -10,7 +10,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var hit_pause_time := 0.2
 @export var hit_pause_scale := 0.1
 @export var hit_flash_time := 0.08
-@export var apex_double_jump_chance := 0.2
+@export var apex_double_jump_chance := 0.4
 @export var apex_jump_impulse := 700.0
 @export var apex_horizontal_impulse := 60.0
 @export var attraction_force := 800.0
@@ -18,7 +18,7 @@ signal damage_taken_changed(ball_id: int, damage_taken: float)
 @export var stage_center := Vector2.ZERO
 @export var ball_bounce_damp := 0.13
 @export var floor_y := 0.0
-@export var random_jump_chance_per_second := 0.8
+@export var random_jump_chance_per_second := 1.2
 @export var random_jump_impulse := 700.0
 @export var random_jump_horizontal_impulse := 60.0
 @export var hitstun_base_time := 0.5
