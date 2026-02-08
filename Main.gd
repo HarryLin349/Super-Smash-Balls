@@ -127,7 +127,8 @@ func _handle_out_of_bounds(ball, fell_below: bool) -> void:
 			sfx_ko.play()
 		ball.queue_free()
 		var effect_pos := ball_pos
-		var direction := Vector2.RIGHT
+		var viewport_center_x := get_viewport_rect().size.x * 0.5
+		var direction := Vector2.RIGHT if ball_pos.x < viewport_center_x else Vector2.LEFT
 		if fell_below:
 			var viewport_size := get_viewport_rect().size
 			effect_pos = Vector2(ball_pos.x, viewport_size.y)
