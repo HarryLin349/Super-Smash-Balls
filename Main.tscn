@@ -173,6 +173,47 @@ shape = SubResource("7")
 texture = ExtResource("11")
 
 [node name="BallLeft" parent="." instance=ExtResource("2")]
+damage = null
+damage_increment = null
+weapon_hit_knockback = null
+weapon_rotation_speed = null
+weapon_orbit_radius = null
+clash_impulse = null
+clash_knockback_suppress_time = null
+ball_id = null
+ball_name = null
+ball_color = null
+radius = null
+hit_pause_time = null
+hit_pause_scale = null
+hit_flash_time = null
+apex_double_jump_chance = null
+apex_jump_impulse = null
+apex_horizontal_impulse = null
+attraction_force = null
+damage_knockback_impulse = null
+stage_center = null
+ball_bounce_damp = null
+floor_y = null
+floor_half_width = null
+random_jump_chance_per_second = null
+random_jump_impulse = null
+random_jump_horizontal_impulse = null
+hitstun_base_time = null
+hitstun_per_damage = null
+hitstun_tint_strength = null
+hitstun_trail_interval = null
+hitstun_trail_lifetime = null
+attraction_speed_cap = null
+hitstun_drag_window = null
+hitstun_drag_strength = null
+double_jump_ring_duration = null
+max_double_jumps = null
+weight = null
+outline_thickness = null
+edge_double_jump_margin = null
+edge_recovery_margin = null
+damage_knockback_multiplier = null
 
 [node name="BallRight" parent="." instance=ExtResource("3")]
 

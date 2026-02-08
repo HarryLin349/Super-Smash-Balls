@@ -94,6 +94,9 @@ func _apply_layout() -> void:
 	if stat_label != null:
 		stat_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		stat_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		stat_label.add_theme_font_size_override("font_size", 40)
+		stat_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+		stat_label.add_theme_constant_override("outline_size", 20)
 		stat_label.size = stat_label.get_minimum_size()
 		stat_label.pivot_offset = Vector2.ZERO
 		stat_label.position = Vector2(center.x - stat_label.size.x * 0.5, size_value.y * 0.5 + 20.0)
@@ -104,11 +107,16 @@ func _update_stat_label() -> void:
 		return
 	stat_label.add_theme_color_override("font_color", _ball_ref.ball_color)
 	if _ball_ref is SwordBall:
-		var weapon := _ball_ref as WeaponBall
-		stat_label.text = "Damage: " + str(int(round(weapon.damage)))
+		var damage_value : float = _ball_ref.get("damage")
+		if typeof(damage_value) == TYPE_INT or typeof(damage_value) == TYPE_FLOAT:
+			stat_label.text = "Damage: " + str(int(round(float(damage_value))))
+		else:
+			stat_label.text = "Damage: 0"
 	elif _ball_ref is DaggerBall:
-		var weapon := _ball_ref as WeaponBall
-		var spin_value := (weapon.weapon_rotation_speed - 5.0) / 2.0 + 1.0
+		var spin_value := 0.0
+		var speed_value : float = _ball_ref.get("weapon_rotation_speed")
+		if typeof(speed_value) == TYPE_INT or typeof(speed_value) == TYPE_FLOAT:
+			spin_value = (float(speed_value) - 5.0) / 2.0 + 1.0
 		stat_label.text = "Spin: " + str(snappedf(spin_value, 0.1))
 	elif _ball_ref is RapierBall:
 		var rapier := _ball_ref as RapierBall
